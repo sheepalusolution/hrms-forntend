@@ -4,10 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import './index.css'
 
+// Contexts
+import { RoleProvider } from "./contexts/RoleContext";
+// import { AuthProvider } from "./contexts/AuthContext"; // optional
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      {/* <AuthProvider> */}   {/* optional if you have AuthContext */}
+        <RoleProvider>
+          <App />
+        </RoleProvider>
+      {/* </AuthProvider> */}
     </BrowserRouter>
   </React.StrictMode>
 );
