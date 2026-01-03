@@ -1,11 +1,16 @@
 {
-  "users": [
+  "employees": [
     {
+      "name": "John cena",
       "id": 1,
-      "email": "sysadmin@hrms.com",
-      "password": "admin123",
-      "role": "sysadmin",
-      "name": "System Admin"
+      "title": "Create a login form using Formik in React JS",
+      "body": "Today's article demonstrates how to develop a login form in React JS using Formik."
+    },
+    {
+      "name": "Roronoa zoro",
+      "id": 2,
+      "title": "How to parse or read CSV files in ReactJS",
+      "body": "This article teaches you how to parse or read CSV files in ReactJS in the simplest way possible."
     }
   ]
 }

@@ -5,6 +5,14 @@ import Login from "../component/auth/login";
 import ForgotPassword from "../component/auth/ForgotPassword";
 import Dashboard from "../pages/DashBoard";
 import Setting from "../pages/Setting";
+import Profile from "../pages/Profile";
+import SubmitReport from "../pages/report/SubmitReport";
+import Review from "../pages/report/Review";
+import Notification from "../pages/Notification";
+import Department from "../pages/Department";
+import AddEmployee from "../pages/admin/AddEmployee";
+
+
 
 const AppRoutes = () => {
   return (
@@ -18,6 +26,17 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/setting" element={<Setting />} />
+        <Route path="/profile" element={<Profile />} />
+         <Route path="/departments" element={<Department />} />
+        <Route path="/notification" element={<Notification />} />
+
+        {/* report routes */}
+        <Route path="/report/submit" element={<SubmitReport />} />
+        <Route path="/report/review" element={<Review />} />
+       
+        
+        {/* Sys Admin */}
+         <Route path="/addEmployee" element={<AddEmployee />} />
       </Route>
     </Routes>
   );
