@@ -30,6 +30,29 @@ export default function Login() {
     navigate("/dashboard");
 
   };
+//   const handleLogin = (e) => {
+//   e.preventDefault();
+
+//   const email = e.target.email.value;
+//   const password = e.target.password.value;
+
+//   if (email === import.meta.env.VITE_ADMIN_EMAIL && password === "admin123") {
+//     Cookies.set("token", "fake-admin-token");
+//     Cookies.set("role", import.meta.env.VITE_ADMIN_ROLE);
+//     navigate("/dashboard");
+//     return;
+//   }
+
+//   if (email === import.meta.env.VITE_USER_EMAIL && password === "user123") {
+//     Cookies.set("token", "fake-user-token");
+//     Cookies.set("role", import.meta.env.VITE_USER_ROLE);
+//     navigate("/dashboard");
+//     return;
+//   }
+
+//   alert("Invalid credentials");
+// };
+
 
   const handleForgotPassword = () => {
     navigate("/forgotPassword"); // fixed URL style

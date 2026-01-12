@@ -14,6 +14,11 @@ const AddEmployee = () => {
       .required("Phone is required"),
     department: Yup.string().required("Department is required"),
     role: Yup.string().required("Role is required"),
+    citizenId: Yup.string()
+    .matches(/^\d+$/, "Citizen ID must be numeric")
+    .min(8, "Citizen ID must be at least 8 digits")
+    .max(12, "Citizen ID must be at most 12 digits")
+    .required("Citizen ID is required"),
   });
 
   // Submit handler
@@ -39,6 +44,7 @@ const AddEmployee = () => {
             phone: "",
             department: "",
             role: "",
+            citizenId: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -102,6 +108,26 @@ const AddEmployee = () => {
                 />
                 <ErrorMessage
                   name="phone"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
+              {/* Citizenid */}
+              <div>
+                <label className="block mb-1 font-medium text-gray-700">
+                  Citizenship
+                </label>
+                <Field
+                  name="citizenId"
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
+                    errors.citizenId && touched.citizenId
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                />
+                <ErrorMessage
+                  name="citizenId"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
@@ -202,6 +228,7 @@ const AddEmployee = () => {
                   </th>
                   <th className="px-4 py-2 text-left">Email</th>
                   <th className="px-4 py-2 text-left">Phone</th>
+                  <th className="px-4 py-2 text-left">Citizenship</th>
                   <th className="px-4 py-2 text-left">Department</th>
                   <th className="px-4 py-2 text-left rounded-tr-lg">
                     Role
@@ -218,6 +245,7 @@ const AddEmployee = () => {
                     <td className="px-4 py-2 text-xs">{emp.name}</td>
                     <td className="px-4 py-2 text-xs">{emp.email}</td>
                     <td className="px-4 py-2 text-xs">{emp.phone}</td>
+                    <td className="px-4 py-2 text-xs">{emp.citizenId}</td>
                     <td className="px-4 py-2 text-xs">{emp.department}</td>
                     <td className="px-4 py-2 text-xs">{emp.role}</td>
                   </tr>

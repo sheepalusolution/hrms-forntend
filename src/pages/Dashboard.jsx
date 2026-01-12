@@ -77,36 +77,67 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Users Table */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4">Recent Users</h2>
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 px-4 text-gray-600">Name</th>
-              <th className="py-2 px-4 text-gray-600">Email</th>
-              <th className="py-2 px-4 text-gray-600">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b hover:bg-gray-50">
-              <td className="py-2 px-4">John Doe</td>
-              <td className="py-2 px-4">john@example.com</td>
-              <td className="py-2 px-4">Admin</td>
-            </tr>
-            <tr className="border-b hover:bg-gray-50">
-              <td className="py-2 px-4">Jane Smith</td>
-              <td className="py-2 px-4">jane@example.com</td>
-              <td className="py-2 px-4">User</td>
-            </tr>
-            <tr className="border-b hover:bg-gray-50">
-              <td className="py-2 px-4">Mark Johnson</td>
-              <td className="py-2 px-4">mark@example.com</td>
-              <td className="py-2 px-4">Manager</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      {/* Recent Users */}
+      <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-4">Recent Users</h2>
+
+        {/* Mobile View - Cards */}
+        <div className="space-y-3">
+          {[
+            { name: "John Doe", email: "john@example.com", role: "Admin" },
+            { name: "Jane Smith", email: "jane@example.com", role: "User" },
+            { name: "Mark Johnson", email: "mark@example.com", role: "Manager" },
+          ].map((user, index) => (
+            <div
+              key={index}
+              className="border rounded-lg p-4 flex justify-between items-start"
+            >
+              <div>
+                <p className="font-semibold text-gray-800">{user.name}</p>
+                <p className="text-sm text-gray-500">{user.email}</p>
+              </div>
+              <div className="text-right">
+                 <p className="text-xs text-gray-500 mb-1">Role</p>
+                 <span className="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-600">
+                {user.role}
+              </span>
+              </div>
+             
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop View - Table */}
+        {/* <div className="hidden sm:block">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b">
+                <th className="py-2 px-4 text-gray-600">Name</th>
+                <th className="py-2 px-4 text-gray-600">Email</th>
+                <th className="py-2 px-4 text-gray-600">Role</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr className="border-b hover:bg-gray-50">
+                <td className="py-2 px-4">John Doe</td>
+                <td className="py-2 px-4">john@example.com</td>
+                <td className="py-2 px-4">Admin</td>
+              </tr>
+              <tr className="border-b hover:bg-gray-50">
+                <td className="py-2 px-4">Jane Smith</td>
+                <td className="py-2 px-4">jane@example.com</td>
+                <td className="py-2 px-4">User</td>
+              </tr>
+              <tr className="border-b hover:bg-gray-50">
+                <td className="py-2 px-4">Mark Johnson</td>
+                <td className="py-2 px-4">mark@example.com</td>
+                <td className="py-2 px-4">Manager</td>
+              </tr>
+            </tbody>
+          </table>
+        </div> */}
+      </div>    
 
       {/* Example chart placeholder */}
       <div className="bg-white shadow rounded-lg p-6 mt-8">

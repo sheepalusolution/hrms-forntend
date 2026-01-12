@@ -6,8 +6,7 @@ export default function Department() {
   const apiUrl = import.meta.env.VITE_API_URL;    // Vite env variable
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/employees`) // fetch from your json-server
+    axios.get(`${apiUrl}/employees`) // fetch from your json-server
       .then((res) => {
          console.log("Response from API:", res.data);
         if (res.data && res.data.employees) {
@@ -19,7 +18,7 @@ export default function Department() {
         }
       })
       .catch((err) => console.error("Error fetching employees:", err));
-  }, [apiUrl]);
+  }, []);
 
   return (
     <div className="p-6">

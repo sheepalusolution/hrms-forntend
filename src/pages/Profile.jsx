@@ -348,18 +348,18 @@ const Profile = () => {
         </div>
       </div>
       {isEditing &&(
-         <div className="flex justify-end gap-2 mt-4 md:col-span-2">
+         <div className="flex justify-center gap-2 mt-4 md:col-span-2">
             <button
                 type="button"
                 onClick={handleSave}
-                className="px-4 py-2 w-30 bg-sky-600 text-white rounded hover:bg-sky-800 transition-colors"
+                className="px-4 py-2 w-60 bg-sky-600 text-white rounded hover:bg-sky-800 transition-colors"
             >
              Save
             </button>
             <button
                 type="button"
                 onClick={handleDiscard}
-                className="px-4 py-2 w-30 rounded border-1 border-black/10 text-black hover:bg-gray-800 hover:text-white hover:border-white transition-colors"
+                className="px-4 py-2 w-60 rounded border-1 border-black/10 text-black hover:bg-gray-800 hover:text-white hover:border-white transition-colors"
             >
              Discard
             </button>

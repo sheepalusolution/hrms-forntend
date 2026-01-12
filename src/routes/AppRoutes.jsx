@@ -11,6 +11,8 @@ import Review from "../pages/report/Review";
 import Notification from "../pages/Notification";
 import Department from "../pages/Department";
 import AddEmployee from "../pages/admin/AddEmployee";
+import Payroll from "../pages/Payroll";
+import LeaveRequest from "../pages/LeaveRequest";
 
 
 
@@ -29,6 +31,8 @@ const AppRoutes = () => {
         <Route path="/profile" element={<Profile />} />
          <Route path="/departments" element={<Department />} />
         <Route path="/notification" element={<Notification />} />
+        <Route path="/payroll" element={<Payroll />} />
+        <Route path="/leaveRequest" element={<LeaveRequest />} />
 
         {/* report routes */}
         <Route path="/report/submit" element={<SubmitReport />} />
