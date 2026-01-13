@@ -13,6 +13,7 @@ import Department from "../pages/Department";
 import AddEmployee from "../pages/admin/AddEmployee";
 import Payroll from "../pages/Payroll";
 import LeaveRequest from "../pages/LeaveRequest";
+import ApplyLeave from "../pages/ApplyLeave";
 
 
 
@@ -32,6 +33,7 @@ const AppRoutes = () => {
          <Route path="/departments" element={<Department />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/payroll" element={<Payroll />} />
+        <Route path="/applyLeave" element={<ApplyLeave />} />
         <Route path="/leaveRequest" element={<LeaveRequest />} />
 
         {/* report routes */}

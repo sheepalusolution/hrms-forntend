@@ -41,7 +41,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
     { label: 'Job Posting', href: '/attendance', icon: <FiFileText /> },
     { label: 'Candidates', href: '/attendance', icon: <FiUserCheck /> },
 ///////
-    { label: 'Apply Leave', href: '/leave/apply', icon: <FiCalendar /> },
+    { label: 'Apply Leave', href: '/applyLeave', icon: <FiCalendar /> },
     { label: 'Departments', href: '/departments', icon: <FiBriefcase /> },
     {
     label: 'Report',
