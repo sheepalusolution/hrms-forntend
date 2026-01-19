@@ -1,70 +1,251 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate, useLocation} from 'react-router-dom';
+// import React, { useState } from 'react';
+// import { NavLink, useNavigate, useLocation} from 'react-router-dom';
+// import {
+//   FiHome, FiUsers, FiUserPlus, FiClipboard, FiCalendar, FiCreditCard,
+//   FiBriefcase, FiUser, FiInfo, FiSettings, FiLogOut, FiPlusCircle,
+//   FiLock, FiBarChart2, FiClock, FiFileText, FiUserCheck, FiMenu, FiX,FiChevronDown
+// } from 'react-icons/fi';
+// import Cookies from 'js-cookie';
+
+// const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
+//   const navigate = useNavigate();
+  
+//   const handleLogout = () => {
+//     Cookies.remove('token');
+//     Cookies.remove('role');
+//     navigate('/');
+//   };
+
+
+//   const location = useLocation();
+//   const currentPath = location.pathname;
+
+
+//   const navLinks = [
+//     { label: 'Dashboard', href: '/dashboard', icon: <FiHome />},
+// //Sysadmin
+//     { label: 'Users Management', href: '/employees', icon: <FiUsers /> },
+//     { label: 'Add Employee', href: '/addEmployee', icon: <FiUserPlus /> },
+//     { label: 'Roles & Permissions', href: '/employees', icon: <FiLock /> },
+// //hr-admin
+//     { label: 'Employees', href: '/employees', icon: <FiUsers /> },
+//     { label: 'Leave Management', href: '/leave-management', icon: <FiCalendar /> },
+//     { label: 'Attendance', href: '/attendance', icon: <FiClock /> },
+// //financer
+//     { label: 'Payroll', href: '/payroll', icon: <FiCreditCard /> },
+//     { label: 'Expense Management', href: '/payroll', icon: <FiPlusCircle /> },
+// // Manager
+//     { label: 'Team member', href: '/attendance', icon: <FiUser /> },
+//     { label: 'Leave Request', href: '/leaveRequest', icon: <FiCalendar /> },
+// // Recruiter
+//     { label: 'Job Posting', href: '/attendance', icon: <FiFileText /> },
+//     { label: 'Candidates', href: '/attendance', icon: <FiUserCheck /> },
+// ///////
+//     { label: 'Apply Leave', href: '/applyLeave', icon: <FiCalendar /> },
+//     { label: 'Departments', href: '/departments', icon: <FiBriefcase /> },
+//     {
+//     label: 'Report',
+//     icon: <FiBarChart2 />,
+//       children: [
+//         { label: 'Submit Report', href: '/report/submit' },
+//         { label: 'View Reports', href: '/report/review' },
+//       ],
+//     },
+//     { label: 'Profile', href: '/profile', icon: <FiUser /> },
+//     { label: 'About Us', href: '/aboutus', icon: <FiInfo /> },
+//     { label: 'Settings', href: '/setting', icon: <FiSettings /> },
+//     { label: 'Logout', icon: <FiLogOut />, action: 'logout' },
+//   ];
+
+//   const [openDropdown, setOpenDropdown] = useState(null);
+
+
+//   return (
+//     <>
+//       {/* Mobile Toggle Button */}
+
+//       {/* Mobile Overlay */}
+//       {isMenuOpen && (
+//         <div
+//           className="fixed inset-0 bg-black/40 z-40 md:hidden"
+//           onClick={() => setIsMenuOpen(false)}
+//         />
+//       )}
+
+//       {/* Sidebar */}
+//       <aside
+//         className={`
+//           fixed top-0 md:top-16 left-0 z-50
+//           w-75 h-full md:h-[calc(100vh-64px)]
+//           bg-slate-50 shadow-md flex flex-col
+//           transform transition-transform duration-300
+//           ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+//           md:translate-x-0
+//         `}
+//       >
+//         {/* Mobile Header */}
+//         <div className="md:hidden flex items-center justify-between px-4 py-4 border-b">
+//           <h2 className="text-lg font-semibold text-sky-600">Menu</h2>
+//           <button onClick={() => setIsMenuOpen(false)}>
+//             <FiX size={22} />
+//           </button>
+//         </div>
+
+//         {/* Menu Links */}
+//         <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto custom-scrollbar">
+//           {navLinks.map((link, index) =>
+
+//             link.action === 'logout' ? (
+//               <button
+//                 key={link.label}
+//                 onClick={handleLogout}
+//                 className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-gray-700 hover:bg-red-50 hover:text-red-600 transition"
+//               >
+//                 <span className="text-xl">{link.icon}</span>
+//                 <span className="text-md">{link.label}</span>
+//               </button>
+//             ) : link.children ? (
+//               <div key={link.label}>
+//                 {/* Main Link */}
+//                 <button
+//                   onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+//                   className={`w-full flex items-center justify-between gap-3 px-4 py-2 rounded-md transition ${
+//                     link.children.some(child => child.href === currentPath)
+//                       ? 'bg-sky-200 font-semibold text-sky-700'
+//                       : 'text-gray-700 hover:bg-sky-50 hover:text-sky-600'
+//                   }`}
+//                     >
+
+//                   <div className="flex items-center gap-3">
+//                     <span className="text-xl">{link.icon}</span>
+//                     <span className="text-md">{link.label}</span>
+//                   </div>
+//                   <span
+//                       className={`transition-transform duration-300 ${
+//                         openDropdown === index ? 'rotate-180' : 'rotate-0'
+//                       }`}
+//                     >
+//                       <FiChevronDown />
+//                     </span>
+
+//                 </button>
+
+//                 {/* Dropdown Links */}
+//                 {openDropdown === index &&
+//                   link.children.map((child) => (
+//                     <NavLink
+//                       key={child.label}
+//                       to={child.href}
+//                       onClick={() => setIsMenuOpen(false)}
+//                       className={({ isActive }) =>
+//                         `flex items-center gap-3 px-10 py-2 rounded-md transition ${
+//                           isActive ? 'bg-sky-100 font-semibold text-sky-700' : 'text-gray-600 hover:bg-sky-50 hover:text-sky-700'
+//                         }`
+//                       }
+//                     >
+//                       {child.label}
+//                     </NavLink>
+//                   ))}
+//               </div>
+//             ) : (
+//               <NavLink
+//                 key={link.label}
+//                 to={link.href}
+//                 onClick={() => setIsMenuOpen(false)}
+//                 className={({ isActive }) =>
+//                   `flex items-center gap-3 px-4 py-2 rounded-md transition ${
+//                     isActive
+//                       ? 'bg-sky-200 font-semibold text-sky-700'
+//                       : 'text-gray-700 hover:bg-sky-50 hover:text-sky-600'
+//                   }`
+//                 }
+//               >
+//                 <span className="text-xl">{link.icon}</span>
+//                 <span className="text-md">{link.label}</span>
+//               </NavLink>
+//             )
+//           )}
+
+//         </nav>
+//       </aside>
+//     </>
+//   );
+// };
+
+// export default Sidebar;
+
+import React, { useState, useContext } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
-  FiHome, FiUsers, FiUserPlus, FiClipboard, FiCalendar, FiCreditCard,
-  FiBriefcase, FiUser, FiInfo, FiSettings, FiLogOut, FiPlusCircle,
-  FiLock, FiBarChart2, FiClock, FiFileText, FiUserCheck, FiMenu, FiX,FiChevronDown
-} from 'react-icons/fi';
-import Cookies from 'js-cookie';
+  FiHome, FiUsers, FiUserPlus, FiCalendar, FiCreditCard,
+  FiBriefcase, FiUser, FiInfo, FiSettings, FiLogOut,
+  FiLock, FiBarChart2, FiClock, FiFileText,
+  FiUserCheck, FiX, FiChevronDown
+} from "react-icons/fi";
+
+import { AuthContext } from "../contexts/AuthContext";
+import { ROLE_PERMISSIONS } from "../service/roles";
 
 const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
   const navigate = useNavigate();
-  
-  const handleLogout = () => {
-    Cookies.remove('token');
-    Cookies.remove('role');
-    navigate('/');
-  };
-
-
   const location = useLocation();
   const currentPath = location.pathname;
 
+  const { currentUser, logout } = useContext(AuthContext);
+  const role = currentUser?.role;
+  const permissions = ROLE_PERMISSIONS[role] || [];
+
+  const hasAccess = (feature) =>
+    permissions.includes("*") || permissions.includes(feature);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   const navLinks = [
-    { label: 'Dashboard', href: '/dashboard', icon: <FiHome />},
-//Sysadmin
-    { label: 'Users Management', href: '/employees', icon: <FiUsers /> },
-    { label: 'Add Employee', href: '/addEmployee', icon: <FiUserPlus /> },
-    { label: 'Roles & Permissions', href: '/employees', icon: <FiLock /> },
-//hr-admin
-    { label: 'Employees', href: '/employees', icon: <FiUsers /> },
-    { label: 'Leave Management', href: '/leave-management', icon: <FiCalendar /> },
-    { label: 'Attendance', href: '/attendance', icon: <FiClock /> },
-//financer
-    { label: 'Payroll', href: '/payroll', icon: <FiCreditCard /> },
-    { label: 'Expense Management', href: '/payroll', icon: <FiPlusCircle /> },
-// Manager
-    { label: 'Team member', href: '/attendance', icon: <FiUser /> },
-    { label: 'Leave Request', href: '/leaveRequest', icon: <FiCalendar /> },
-// Recruiter
-    { label: 'Job Posting', href: '/attendance', icon: <FiFileText /> },
-    { label: 'Candidates', href: '/attendance', icon: <FiUserCheck /> },
-///////
-    { label: 'Apply Leave', href: '/applyLeave', icon: <FiCalendar /> },
-    { label: 'Departments', href: '/departments', icon: <FiBriefcase /> },
+    { label: "Dashboard", href: "/dashboard", icon: <FiHome />, feature: "dashboard" },
+
+    // Sysadmin / HR
+    { label: "Employees", href: "/employees", icon: <FiUsers />, feature: "employees" },
+    { label: "Add Employee", href: "/addEmployee", icon: <FiUserPlus />, feature: "employees" },
+    { label: "Roles & Permissions", href: "/roles", icon: <FiLock />, feature: "employees" },
+
+    // Attendance / Leave
+    { label: "Attendance", href: "/attendance", icon: <FiClock />, feature: "attendance" },
+    { label: "Apply Leave", href: "/applyLeave", icon: <FiCalendar />, feature: "apply-leave" },
+    { label: "Leave Request", href: "/leaveRequest", icon: <FiCalendar />, feature: "leave-request" },
+
+    // Finance
+    { label: "Payroll", href: "/payroll", icon: <FiCreditCard />, feature: "payroll" },
+
+    // Recruiter
+    { label: "Candidates", href: "/candidates", icon: <FiUserCheck />, feature: "candidates" },
+
+    // Departments
+    { label: "Departments", href: "/departments", icon: <FiBriefcase />, feature: "departments" },
+
+    // Reports (Dropdown)
     {
-    label: 'Report',
-    icon: <FiBarChart2 />,
+      label: "Report",
+      icon: <FiBarChart2 />,
       children: [
-        { label: 'Submit Report', href: '/report/submit' },
-        { label: 'View Reports', href: '/report/review' },
-      ],
+        { label: "Submit Report", href: "/report/submit", feature: "report-submit" },
+        { label: "View Reports", href: "/report/review", feature: "report-review" }
+      ]
     },
-    { label: 'Profile', href: '/profile', icon: <FiUser /> },
-    { label: 'About Us', href: '/aboutus', icon: <FiInfo /> },
-    { label: 'Settings', href: '/setting', icon: <FiSettings /> },
-    { label: 'Logout', icon: <FiLogOut />, action: 'logout' },
+
+    { label: "Profile", href: "/profile", icon: <FiUser />, feature: "profile" },
+    { label: "About Us", href: "/aboutus", icon: <FiInfo />, feature: "about" },
+    { label: "Settings", href: "/setting", icon: <FiSettings />, feature: "settings" },
+
+    { label: "Logout", icon: <FiLogOut />, action: "logout" }
   ];
 
   const [openDropdown, setOpenDropdown] = useState(null);
 
-
   return (
     <>
-      {/* Mobile Toggle Button */}
-
-      {/* Mobile Overlay */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -72,18 +253,13 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`
-          fixed top-0 md:top-16 left-0 z-50
-          w-75 h-full md:h-[calc(100vh-64px)]
+        className={`fixed top-0 md:top-16 left-0 z-50 w-75 h-full md:h-[calc(100vh-64px)]
           bg-slate-50 shadow-md flex flex-col
           transform transition-transform duration-300
-          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0
-        `}
+          ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        {/* Mobile Header */}
+        {/* Mobile header */}
         <div className="md:hidden flex items-center justify-between px-4 py-4 border-b">
           <h2 className="text-lg font-semibold text-sky-600">Menu</h2>
           <button onClick={() => setIsMenuOpen(false)}>
@@ -91,83 +267,84 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
           </button>
         </div>
 
-        {/* Menu Links */}
-        <nav className="flex-1 px-2 py-3 space-y-1 overflow-y-auto custom-scrollbar">
-          {navLinks.map((link, index) =>
+        {/* Scrollable menu */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <nav className="px-2 py-3 space-y-1">
+            {navLinks.map((link, index) => {
+              // LOGOUT (always visible at bottom)
+              if (link.action === "logout") {
+                return (
+                  <button
+                    key={link.label}
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-2 mt-auto text-red-600 hover:bg-red-50 rounded-md"
+                  >
+                    {link.icon}
+                    {link.label}
+                  </button>
+                );
+              }
 
-            link.action === 'logout' ? (
-              <button
-                key={link.label}
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-gray-700 hover:bg-red-50 hover:text-red-600 transition"
-              >
-                <span className="text-xl">{link.icon}</span>
-                <span className="text-md">{link.label}</span>
-              </button>
-            ) : link.children ? (
-              <div key={link.label}>
-                {/* Main Link */}
-                <button
-                  onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
-                  className={`w-full flex items-center justify-between gap-3 px-4 py-2 rounded-md transition ${
-                    link.children.some(child => child.href === currentPath)
-                      ? 'bg-sky-200 font-semibold text-sky-700'
-                      : 'text-gray-700 hover:bg-sky-50 hover:text-sky-600'
-                  }`}
+              // DROPDOWN
+              if (link.children) {
+                const visibleChildren = link.children.filter(child =>
+                  hasAccess(child.feature)
+                );
+                if (!visibleChildren.length) return null;
+
+                return (
+                  <div key={link.label}>
+                    <button
+                      onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                      className="w-full flex items-center justify-between px-4 py-2 rounded-md hover:bg-sky-50"
                     >
+                      <div className="flex items-center gap-3">
+                        {link.icon}
+                        {link.label}
+                      </div>
+                      <FiChevronDown
+                        className={`transition ${openDropdown === index ? "rotate-180" : ""}`}
+                      />
+                    </button>
 
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{link.icon}</span>
-                    <span className="text-md">{link.label}</span>
+                    {openDropdown === index &&
+                      visibleChildren.map(child => (
+                        <NavLink
+                          key={child.label}
+                          to={child.href}
+                          className="block px-10 py-2 text-gray-600 hover:bg-sky-50"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {child.label}
+                        </NavLink>
+                      ))}
                   </div>
-                  <span
-                      className={`transition-transform duration-300 ${
-                        openDropdown === index ? 'rotate-180' : 'rotate-0'
-                      }`}
-                    >
-                      <FiChevronDown />
-                    </span>
+                );
+              }
 
-                </button>
+              // NORMAL LINK
+              if (!hasAccess(link.feature)) return null;
 
-                {/* Dropdown Links */}
-                {openDropdown === index &&
-                  link.children.map((child) => (
-                    <NavLink
-                      key={child.label}
-                      to={child.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-10 py-2 rounded-md transition ${
-                          isActive ? 'bg-sky-100 font-semibold text-sky-700' : 'text-gray-600 hover:bg-sky-50 hover:text-sky-700'
-                        }`
-                      }
-                    >
-                      {child.label}
-                    </NavLink>
-                  ))}
-              </div>
-            ) : (
-              <NavLink
-                key={link.label}
-                to={link.href}
-                onClick={() => setIsMenuOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-md transition ${
-                    isActive
-                      ? 'bg-sky-200 font-semibold text-sky-700'
-                      : 'text-gray-700 hover:bg-sky-50 hover:text-sky-600'
-                  }`
-                }
-              >
-                <span className="text-xl">{link.icon}</span>
-                <span className="text-md">{link.label}</span>
-              </NavLink>
-            )
-          )}
-
-        </nav>
+              return (
+                <NavLink
+                  key={link.label}
+                  to={link.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2 rounded-md ${
+                      isActive ? "bg-sky-200 text-sky-700" : "text-gray-700 hover:bg-sky-50"
+                    }`
+                  }
+                >
+                  {link.icon}
+                  {link.label}
+                </NavLink>
+              );
+            })}
+          </nav>
+        </div>
       </aside>
+
     </>
   );
 };

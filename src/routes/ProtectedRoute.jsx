@@ -1,30 +1,29 @@
-// // ProtectedRoute.jsx
-// import React from "react";
-// import { Navigate } from "react-router-dom";
-// import Cookies from "js-cookie";
-
-// const ProtectedRoutes = ({ roles, children }) => {
-//   const role = Cookies.get("role");
-
-//   if (!role || !roles.includes(role)) {
-//     return <Navigate to="/" replace />; // redirect to login if not allowed
-//   }
-
-//   return children;
-// };
-
-// export default ProtectedRoutes;
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { AuthContext } from "../contexts/AuthContext";
+import { ROLE_PERMISSIONS } from "../service/roles";
 
-const ProtectedRoute = ({ allowedRoles, children }) => {
-  const role = Cookies.get("role");
+const ProtectedRoute = ({ children, feature }) => {
+  const { currentUser } = useContext(AuthContext);
 
-  if (!role) {
-    return <Navigate to="/login" replace />;
+  if (!currentUser) {
+    return <Navigate to="/" replace />;
   }
 
-  if (!allowedRoles.includes(role)) {
+  const role = currentUser.role;
+  const permissions = ROLE_PERMISSIONS[role];
+
+  if (!permissions) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // sysadmin can access everything
+  if (permissions.includes("*")) {
+    return children;
+  }
+
+  // check feature permission
+  if (!permissions.includes(feature)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

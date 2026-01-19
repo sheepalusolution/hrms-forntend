@@ -1,22 +1,56 @@
 {
-  "employees": [
+  "users": [
     {
-      "name": "John cena",
       "id": 1,
-      "title": "Create a login form using Formik in React JS",
-      "body": "Today's article demonstrates how to develop a login form in React JS using Formik."
+      "email": "employee@test.com",
+      "password": "123456",
+      "role": "employee",
+      "name": "Employee User"
     },
     {
-      "name": "Roronoa zoro",
       "id": 2,
-      "title": "How to parse or read CSV files in ReactJS",
-      "body": "This article teaches you how to parse or read CSV files in ReactJS in the simplest way possible."
+      "email": "re@test.com",
+      "password": "123456",
+      "role": "recruiter",
+      "name": "Recruiter User"
     },
-     {
-      "name": " zoro",
+    {
       "id": 3,
-      "title": "How to parse or read CSV files in ReactJS",
-      "body": "This article teaches you how to parse or read CSV files in ReactJS in the simplest way possible."
+      "email": "manager@test.com",
+      "password": "123456",
+      "role": "manager",
+      "name": "Manager User"
+    },
+    {
+      "id": 4,
+      "email": "hr@test.com",
+      "password": "123456",
+      "role": "hr-admin",
+      "name": "HR Admin"
+    },
+    {
+      "id": 5,
+      "email": "finance@test.com",
+      "password": "123456",
+      "role": "financer",
+      "name": "Finance User"
+    },
+    {
+      "id": 6,
+      "email": "admin@test.com",
+      "password": "admin123",
+      "role": "sysadmin",
+      "name": "System Admin"
     }
-  ]
+  ],
+
+  "departments": [
+    { "id": 1, "name": "HR" },
+    { "id": 2, "name": "Engineering" },
+    { "id": 3, "name": "Finance" }
+  ],
+
+  "attendance": [],
+  "leaveRequests": [],
+  "reports": []
 }
