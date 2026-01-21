@@ -6,7 +6,8 @@ export const ROLE_PERMISSIONS = {
     "report-submit",
     "report-review",
     "profile",
-    "about"
+    "about",
+    "payslip"
   ],
 
   recruiter: [
@@ -14,7 +15,8 @@ export const ROLE_PERMISSIONS = {
     "attendance",
     "report-submit",
     "candidates",
-    "profile"
+    "profile",
+    "payslip"
   ],
 
   manager: [
@@ -22,7 +24,9 @@ export const ROLE_PERMISSIONS = {
     "attendance",
     "leave-request",
     "report-review",
-    "profile"
+    "profile",
+    "payroll-processing",
+    "payslip"
   ],
 
   "hr-admin": [
@@ -32,16 +36,21 @@ export const ROLE_PERMISSIONS = {
     "leave-management",
     "report-review",
     "departments",
-    "profile"
+    "profile",
+    "salary-mgmt",
+    "payroll-processing",
+    "payslip"
   ],
 
   financer: [
     "dashboard",
     "attendance",
     "finance",
-    "payroll",
     "profile",
-    "attendance"
+    "attendance",
+    "salary-mgmt",
+    "payroll-processing",
+    "payslip"
   ],
 
   sysadmin: ["*"]

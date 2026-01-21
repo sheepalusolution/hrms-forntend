@@ -88,28 +88,6 @@ const SubmitReport = () => {
               <ErrorMessage name="description" component="div" className="text-red-600 text-sm mt-1" />
             </div>
 
-            {/* Date Picker */}
-            {/* <div className="relative w-full">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Date</label>
-              <div className="flex items-center border rounded-lg bg-gray-50 px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-sky-500 focus-within:border-sky-500">
-                <FiCalendar className="text-gray-400 mr-2" size={18} />
-                <Field
-                  type="date"
-                  name="date"
-                  className="w-full border-none bg-transparent outline-none text-gray-700 placeholder-gray-400"
-                />
-                {values.date && (
-                  <button
-                    type="button"
-                    onClick={() => setFieldValue("date", "")}
-                    className="ml-2 text-gray-400 hover:text-red-500"
-                  >
-                    <FiX size={18} />
-                  </button>
-                )}
-              </div>
-              <ErrorMessage name="date" component="div" className="text-red-600 text-sm mt-1" />
-            </div> */}
             {/* Calendar Date Picker */}
             {/* <div className="w-full">
               <label className="block text-sm font-medium text-gray-600 mb-1">

@@ -1,32 +1,45 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import React, { useState } from "react";
+import { LuEyeClosed } from "react-icons/lu";
+import { FiEye } from "react-icons/fi";
 
 const AddEmployee = () => {
   const [employees, setEmployees] = useState([]);
+  const [showPasswordFields, setShowPasswordFields] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
 
   // Validation schema
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
     phone: Yup.string()
       .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
       .required("Phone is required"),
     department: Yup.string().required("Department is required"),
     role: Yup.string().required("Role is required"),
     citizenId: Yup.string()
-    .matches(/^\d+$/, "Citizen ID must be numeric")
-    .min(8, "Citizen ID must be at least 8 digits")
-    .max(12, "Citizen ID must be at most 12 digits")
-    .required("Citizen ID is required"),
+      .matches(/^\d+$/, "Citizen ID must be numeric")
+      .min(8, "Citizen ID must be at least 8 digits")
+      .max(12, "Citizen ID must be at most 12 digits")
+      .required("Citizen ID is required"),
   });
 
-  // Submit handler
   const handleSubmit = (values, { resetForm }) => {
-    setEmployees((prev) => [...prev, values]);
-    resetForm();
-    alert("Employee Added Successfully!");
-  };
+  const { confirmPassword, ...employeeData } = values; // exclude confirmPassword
+  setEmployees((prev) => [...prev, employeeData]);
+  resetForm();
+  setShowPasswordFields(true); // hide password fields after adding
+  alert("Employee Added Successfully!");
+};
+
 
   return (
     <div className="flex flex-col lg:flex-row items-start justify-center bg-gray-100 p-4 gap-6 ">
@@ -42,6 +55,8 @@ const AddEmployee = () => {
             name: "",
             email: "",
             phone: "",
+            password: "",
+            confirmPassword: "",
             department: "",
             role: "",
             citizenId: "",
@@ -73,6 +88,7 @@ const AddEmployee = () => {
               </div>
 
               {/* Email */}
+              
               <div>
                 <label className="block mb-1 font-medium text-gray-700">
                   Email
@@ -92,9 +108,66 @@ const AddEmployee = () => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
+                
+              {showPasswordFields && (
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Password */}
+                <div className="flex-1">
+                  <label className="block mb-1 font-medium text-gray-700">Password</label>
+                  <div className="relative flex items-center">
+                  <Field
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
+                      errors.password && touched.password ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-sky-600"
+                  >
+                    {showPassword ? <LuEyeClosed size={18} /> : <FiEye size={18} />}
+                  </button>
+                  </div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-              {/* Phone */}
-              <div>
+                {/* Confirm Password */}
+                <div className="flex-1">
+                  <label className="block mb-1 font-medium text-gray-700">Confirm Password</label>
+                  <div className="relative flex items-center">
+                  <Field
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
+                      errors.confirmPassword && touched.confirmPassword ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setConfirmShowPassword(!showConfirmPassword)}
+                    className="absolute right-3 text-gray-500 hover:text-sky-600"
+                  >
+                    {showConfirmPassword ? <LuEyeClosed size={18} /> : <FiEye size={18} />}
+                  </button>
+                  </div>
+                  <ErrorMessage
+                    name="confirmPassword"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+              </div>
+            )}
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Phone */}
+                <div>
                 <label className="block mb-1 font-medium text-gray-700">
                   Phone
                 </label>
@@ -132,8 +205,10 @@ const AddEmployee = () => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-
-              {/* Department */}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 ">
+                {/* Department */}
               <div>
                 <label className="block mb-1 font-medium text-gray-700">
                   Department
@@ -184,6 +259,7 @@ const AddEmployee = () => {
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
+              </div>
               </div>
 
               {/* Buttons */}

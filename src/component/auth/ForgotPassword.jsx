@@ -1,86 +1,3 @@
-// import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { FiMail, FiArrowLeft } from "react-icons/fi";
-// import illu from "../../assets/img1.webp"; // background illustration
-// import logo from "../../assets/logo/logo.png";
-
-// export default function ForgotPassword() {
-//   const navigate = useNavigate();
-//   const [email, setEmail] = useState("");
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     alert(`Password reset link sent to ${email}`);
-//     setEmail("");
-//   };
-
-//   return (
-//     <div className="min-h-screen flex flex-col md:flex-row">
-//       {/* Left Panel (Background Image for Mobile & Illustration for Desktop) */}
-//       <div
-//         className="w-full md:w-1/2 h-60 md:h-auto bg-cover bg-center relative"
-//         style={{ backgroundImage: `url(${illu})` }}
-//       >
-//         {/* Dark overlay */}
-//         <div className="absolute inset-0 bg-black/30"></div>
-//       </div>
-
-//       {/* Form Panel */}
-//       <div className="flex w-full md:w-1/2 items-center justify-center p-8 -mt-32 md:mt-0 z-20">
-//         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md relative z-30">
-//           {/* Back Button */}
-//           <button
-//             type="button"
-//             onClick={() => navigate("/")}
-//             className="flex items-center gap-1 text-gray-600 hover:text-blue-600 mb-4"
-//           >
-//             <FiArrowLeft />
-//             <span className="text-sm">Back to Login</span>
-//           </button>
-
-//            {/* Logo */}
-//         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
-//           <img src={logo} alt="Logo" className="w-28 md:w-32" />
-//         </div>
-
-          // <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-          //   Forgot Password
-          // </h1>
-          // <p className="text-gray-600 mb-6 text-center">
-          //   Enter your registered email to receive password reset instructions.
-          // </p>
-
-//           <form onSubmit={handleSubmit} className="space-y-4">
-//             {/* Email Input */}
-//             <div className="relative">
-//               <label className="block text-gray-700 mb-1" htmlFor="email">
-//                 Email
-//               </label>
-//               <input
-//                 type="email"
-//                 id="email"
-//                 placeholder="you@example.com"
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 required
-//                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-//               />
-//               <FiMail className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400" />
-//             </div>
-
-//             <button
-//               type="submit"
-//               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-//             >
-//               Send Reset Link
-//             </button>
-//           </form>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useState } from 'react';
 import illu from '../../assets/reset.png';
 import logo from '../../assets/logo/logo.png';
@@ -131,9 +48,12 @@ export default function ForgotPassword() {
           >
             <img src={logo} alt="Logo" className="mx-auto mb-6 w-62" />
             <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-            Reset Password
+            Forgot your Password!
             </h1>
-            <img src={illu} alt="Illustration" className="mt-6 w-100 mx-auto" />
+            <p className="text-gray-600 text-center">
+            Securely reset your password in just a few steps.
+          </p>
+            <img src={illu} alt="Illustration" className="mt-6 w-90 mx-auto" />
           </motion.div>
         </AnimatePresence>
       </div>

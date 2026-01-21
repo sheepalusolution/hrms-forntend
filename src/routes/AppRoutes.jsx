@@ -58,7 +58,7 @@ import { Routes, Route } from "react-router-dom";
 import UserLayout from "../layout/UserLayout";
 
 // Public pages
-import Login from "../component/auth/login";
+
 import ForgotPassword from "../component/auth/ForgotPassword";
 
 // Auth & Protection
@@ -72,7 +72,6 @@ import Setting from "../pages/Setting";
 import Profile from "../pages/Profile";
 import Notification from "../pages/Notification";
 import Department from "../pages/Department";
-import Payroll from "../pages/Payroll";
 import Attendance from "../pages/Attendance";
 import ApplyLeave from "../pages/ApplyLeave";
 import LeaveRequest from "../pages/LeaveRequest";
@@ -85,6 +84,9 @@ import Review from "../pages/report/Review";
 import AddEmployee from "../pages/admin/AddEmployee";
 import Unauthorized from "../component/auth/Unauthorized";
 import Auth from "../service/auth";
+import Login from "../component/auth/Login";
+import SalaryManagement from "../pages/payroll/SalaryMgmt";
+import PayrollProcessing from "../pages/payroll/PayrollProcessing";
 
 // Unauthorized
 
@@ -167,14 +169,14 @@ const AppRoutes = () => {
           />
 
           {/* ================= PAYROLL / FINANCE ================= */}
-          <Route
+          {/* <Route
             path="/payroll"
             element={
               <ProtectedRoute feature="finance">
                 <Payroll />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           {/* ================= ATTENDANCE & LEAVE ================= */}
           <Route
@@ -203,6 +205,26 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
+
+          {/*=================== payroll============== */}
+           <Route
+            path="/payroll/management"
+            element={
+              <ProtectedRoute feature="salary-mgmt">
+                <SalaryManagement />
+              </ProtectedRoute>
+            }
+          />
+            {/* { label: "Salary Management", href: "/payroll/salaryMgmt", feature: "salary-mgmt" }, */}
+          <Route
+            path="/payroll/processing"
+            element={
+              <ProtectedRoute feature="payroll-processing">
+                <PayrollProcessing />
+              </ProtectedRoute>
+            }
+          />
+            
 
           {/* ================= REPORTS ================= */}
           <Route
