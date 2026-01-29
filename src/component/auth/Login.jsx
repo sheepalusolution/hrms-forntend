@@ -41,13 +41,23 @@ export default function Login() {
   setLoading(true);
   setError("");
 
-  const email = e.target.email.value;
+  const email = e.target.email.value.trim();
   const password = e.target.password.value;
 
   try {
-    // Fetch all users
-    const res = await fetch("http://localhost:3030/users");
-    const users = await res.json();
+    // Import .env url
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+    //Fetch the user
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) throw new Error("Failed to fetch users");
+      const users = await res.json();
+
+
 
     // Check if email exists
     const userByEmail = users.find((u) => u.email === email);

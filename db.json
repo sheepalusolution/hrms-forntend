@@ -56,6 +56,16 @@
       "role": "employee",
       "citizenId": "45454554545",
       "id": 8
+    },
+    {
+      "name": "Rijen Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "asdfghj",
+      "department": "Marketing",
+      "role": "sysadmin",
+      "citizenId": "45454554588",
+      "id": 9
     }
   ],
   "departments": [
