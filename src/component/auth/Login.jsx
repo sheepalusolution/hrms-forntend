@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import illu from "../../assets/img1.webp";
 import logo from "../../assets/logo/logo.png";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { LuEyeClosed } from "react-icons/lu";
 import { FiEye } from "react-icons/fi";
 import { AuthContext } from "../../contexts/AuthContext";
-import { ROLE_PERMISSIONS } from "../../service/roles"; // your permissions object
+import { ROLE_PERMISSIONS } from "../../service/roles";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const panelVariants = {
     initial: { opacity: 0, x: -50 },
@@ -27,44 +28,55 @@ export default function Login() {
     exit: { opacity: 0, y: -20 },
   };
 
+  // Auto-hide error after 3 seconds (optional but nice UX)
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const handleLogin = async (e) => {
   e.preventDefault();
   setLoading(true);
+  setError("");
 
   const email = e.target.email.value;
   const password = e.target.password.value;
 
   try {
-    const res = await fetch("http://localhost:3030/users"); // json-server endpoint
+    // Fetch all users
+    const res = await fetch("http://localhost:3030/users");
     const users = await res.json();
 
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    // Check if email exists
+    const userByEmail = users.find((u) => u.email === email);
 
-    // If no account found, redirect to unauthorized
-    if (!user) {
+    if (!userByEmail) {
+      // Email not found → unauthorized
       navigate("/unauthorized");
-      setLoading(false);
       return;
     }
 
-    // Check if role exists in ROLE_PERMISSIONS
-    if (!ROLE_PERMISSIONS[user.role]) {
-      navigate("/unauthorized"); // redirect if role not allowed
-      setLoading(false);
+    // Email exists but password wrong
+    if (userByEmail.password !== password) {
+      setError("Invalid email or password"); // show error toast/message
       return;
     }
 
-    // Save user in AuthContext
-    login(user);
+    // Check if role has permissions
+    if (!ROLE_PERMISSIONS[userByEmail.role]) {
+      navigate("/unauthorized");
+      return;
+    }
 
-    // Redirect to dashboard (you can customize per role if needed)
+    // Email & password correct → login
+    login(userByEmail);
     navigate("/dashboard");
 
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong");
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong. Please try again.");
   } finally {
     setLoading(false);
   }
@@ -77,7 +89,7 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left side */}
+      {/* Left Side */}
       <div className="hidden md:flex w-1/2 items-center justify-center bg-gray-100 p-10">
         <AnimatePresence mode="wait">
           <motion.div
@@ -90,7 +102,9 @@ export default function Login() {
             transition={{ duration: 0.5 }}
           >
             <img src={logo} alt="Logo" className="mx-auto mb-6 w-62" />
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              Welcome
+            </h2>
             <p className="text-gray-600 mb-6">
               Login to your account and manage your employees efficiently.
             </p>
@@ -99,7 +113,7 @@ export default function Login() {
         </AnimatePresence>
       </div>
 
-      {/* Right side */}
+      {/* Right Side */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-100 p-8">
         <AnimatePresence mode="wait">
           <motion.div
@@ -119,9 +133,30 @@ export default function Login() {
               Login
             </h1>
 
-            <p className="text-gray-600 mb-6 text-center">
+            <p className="text-gray-600 mb-4 text-center">
               Welcome back! Please login to your account.
             </p>
+
+            {/* 🔔 Error Toggler */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="mb-4 rounded-md bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700 flex justify-between items-center"
+              >
+                <span>{error}</span>
+                <button
+                  type="button"
+                  onClick={() => setError("")}
+                  className="font-semibold hover:text-blue-900"
+                >
+                  ✕
+                </button>
+              </motion.div>
+            )}
+
 
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>

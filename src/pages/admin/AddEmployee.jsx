@@ -1,280 +1,251 @@
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import * as Yup from "yup";
-import React, { useState } from "react";
 import { LuEyeClosed } from "react-icons/lu";
 import { FiEye } from "react-icons/fi";
+import ConfirmModal from "../../component/ConfirmModel";
 
 const AddEmployee = () => {
   const [employees, setEmployees] = useState([]);
-  const [showPasswordFields, setShowPasswordFields] = useState(true);
+  const [editingEmployee, setEditingEmployee] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setConfirmShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success", // success | error
+  });
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
 
-  // Validation schema
+    setTimeout(() => {
+      setToast({ show: false, message: "", type });
+    }, 2500);
+  };
+
+  /* ================= FETCH EMPLOYEES ================= */
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const res = await fetch("http://localhost:3030/users");
+        const data = await res.json();
+        setEmployees(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  /* ================= VALIDATION ================= */
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required"),
+
+    password: editingEmployee
+      ? Yup.string()
+      : Yup.string().min(6).required("Password is required"),
+
+    confirmPassword: editingEmployee
+      ? Yup.string()
+      : Yup.string()
+          .oneOf([Yup.ref("password")], "Passwords must match")
+          .required("Confirm Password is required"),
+
     phone: Yup.string()
       .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
       .required("Phone is required"),
+
     department: Yup.string().required("Department is required"),
     role: Yup.string().required("Role is required"),
+
     citizenId: Yup.string()
       .matches(/^\d+$/, "Citizen ID must be numeric")
-      .min(8, "Citizen ID must be at least 8 digits")
-      .max(12, "Citizen ID must be at most 12 digits")
+      .min(8)
+      .max(12)
       .required("Citizen ID is required"),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-  const { confirmPassword, ...employeeData } = values; // exclude confirmPassword
-  setEmployees((prev) => [...prev, employeeData]);
-  resetForm();
-  setShowPasswordFields(true); // hide password fields after adding
-  alert("Employee Added Successfully!");
+  /* ================= SUBMIT ================= */
+  const handleSubmit = async (values, { resetForm }) => {
+    const { confirmPassword, ...payload } = values;
+
+    // Do not update password if empty during edit
+    if (editingEmployee && !payload.password) {
+      delete payload.password;
+    }
+
+    try {
+      let res;
+      // if (!res.ok) {
+      //   throw new Error("Request failed");
+      // }
+
+      if (editingEmployee) {
+        res = await fetch(
+          `http://localhost:3030/users/${editingEmployee.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
+      } else {
+        res = await fetch("http://localhost:3030/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      const savedUser = await res.json();
+
+      setEmployees((prev) =>
+        editingEmployee
+          ? prev.map((emp) =>
+              emp.id === savedUser.id ? savedUser : emp
+            )
+          : [...prev, savedUser]
+      );
+
+      resetForm();
+      setEditingEmployee(null);
+      showToast(editingEmployee ? "Employee updated!" : "Employee added!");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to save employee","error");
+    }
+  };
+
+  /* ================= DELETE ================= */
+  const [confirm, setConfirm] = useState({
+    show: false,
+    message: "",
+    onConfirm: null,
+  });
+  const handleDelete = (id) => {
+  setConfirm({
+    show: true,
+    message: "Are you sure you want to delete this employee?",
+    onConfirm: async () => {
+      try {
+        await fetch(`http://localhost:3030/users/${id}`, {
+          method: "DELETE",
+        });
+        setEmployees(prev => prev.filter(e => e.id !== id));
+        showToast("Employee deleted successfully", "success");
+      } catch (err) {
+        console.error(err);
+        showToast("Delete failed", "error");
+      } finally {
+        setConfirm({ show: false, message: "", onConfirm: null });
+      }
+    },
+  });
 };
 
-
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-center bg-gray-100 p-4 gap-6 ">
-      
-      {/* ================= Add Employee Form ================= */}
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full lg:max-w-lg">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Add Employee
+    <div className="flex flex-col lg:flex-row gap-6 bg-gray-100 p-6">
+      <ConfirmModal
+        show={confirm.show}
+        message={confirm.message}
+        onCancel={() => setConfirm({ show: false, message: "", onConfirm: null })}
+        onConfirm={confirm.onConfirm}
+      />
+
+      {toast.show && (
+        <div
+          className={`fixed top-6 right-6 z-50 px-5 py-3 rounded shadow-lg
+            text-white transition-all duration-300
+            ${toast.type === "success" ? "bg-sky-600" : "bg-red-600"}`}
+        >
+          {toast.message}
+        </div>
+      )}
+      {/* ================= FORM ================= */}
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">
+          {editingEmployee ? "Edit Employee" : "Add Employee"}
         </h2>
 
         <Formik
+          enableReinitialize
           initialValues={{
-            name: "",
-            email: "",
-            phone: "",
+            name: editingEmployee?.name || "",
+            email: editingEmployee?.email || "",
+            phone: editingEmployee?.phone || "",
             password: "",
             confirmPassword: "",
-            department: "",
-            role: "",
-            citizenId: "",
+            department: editingEmployee?.department || "",
+            role: editingEmployee?.role || "",
+            citizenId: editingEmployee?.citizenId || "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, resetForm }) => (
+          {({ resetForm }) => (
             <Form className="space-y-4">
-              
-              {/* Name */}
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Name
-                </label>
-                <Field
-                  name="name"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.name && touched.name
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+              <FieldBlock label="Name" name="name" />
+              <FieldBlock label="Email" name="email" type="email" />
 
-              {/* Email */}
-              
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Email
-                </label>
-                <Field
-                  name="email"
-                  type="email"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.email && touched.email
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-                
-              {showPasswordFields && (
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Password */}
-                <div className="flex-1">
-                  <label className="block mb-1 font-medium text-gray-700">Password</label>
-                  <div className="relative flex items-center">
-                  <Field
+              {!editingEmployee && (
+                <div className="flex gap-4">
+                  <PasswordField
+                    label="Password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                      errors.password && touched.password ? "border-red-500" : "border-gray-300"
-                    }`}
+                    show={showPassword}
+                    toggle={() => setShowPassword(!showPassword)}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-sky-600"
-                  >
-                    {showPassword ? <LuEyeClosed size={18} /> : <FiEye size={18} />}
-                  </button>
-                  </div>
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
+                  <PasswordField
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    show={showConfirmPassword}
+                    toggle={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
                   />
                 </div>
+              )}
 
-                {/* Confirm Password */}
-                <div className="flex-1">
-                  <label className="block mb-1 font-medium text-gray-700">Confirm Password</label>
-                  <div className="relative flex items-center">
-                  <Field
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                      errors.confirmPassword && touched.confirmPassword ? "border-red-500" : "border-gray-300"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setConfirmShowPassword(!showConfirmPassword)}
-                    className="absolute right-3 text-gray-500 hover:text-sky-600"
-                  >
-                    {showConfirmPassword ? <LuEyeClosed size={18} /> : <FiEye size={18} />}
-                  </button>
-                  </div>
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-              </div>
-            )}
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                  {/* Phone */}
-                <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Phone
-                </label>
-                <Field
-                  name="phone"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.phone && touched.phone
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+              <div className="flex gap-4">
+                <FieldBlock label="Phone" name="phone" />
+                <FieldBlock label="Citizenship" name="citizenId" />
               </div>
 
-              {/* Citizenid */}
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Citizenship
-                </label>
-                <Field
-                  name="citizenId"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.citizenId && touched.citizenId
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <ErrorMessage
-                  name="citizenId"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 ">
-                {/* Department */}
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Department
-                </label>
-                <Field
-                  as="select"
+              <div className="flex gap-4">
+                <SelectBlock
+                  label="Department"
                   name="department"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.department && touched.department
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  <option value="">Select Department</option>
-                  <option value="HR">HR</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Development">Development</option>
-                  <option value="Marketing">Marketing</option>
-                </Field>
-                <ErrorMessage
-                  name="department"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
+                  options={["HR", "Finance", "Development", "Marketing"]}
+                />
+                <SelectBlock
+                  label="Role"
+                  name="role"
+                  options={[
+                    "employee",
+                    "manager",
+                    "hr-admin",
+                    "sysadmin",
+                  ]}
                 />
               </div>
 
-              {/* Role */}
-              <div>
-                <label className="block mb-1 font-medium text-gray-700">
-                  Role
-                </label>
-                <Field
-                  as="select"
-                  name="role"
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400 ${
-                    errors.role && touched.role
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  <option value="">Select Role</option>
-                  <option value="Admin">Admin</option>
-                  <option value="Manager">Manager</option>
-                  <option value="Employee">Employee</option>
-                </Field>
-                <ErrorMessage
-                  name="role"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-sky-600 text-white py-2 rounded-lg hover:bg-sky-800 transition"
+                  className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition-colors duration-300"
                 >
-                  Add Employee
+                  {editingEmployee ? "Update" : "Add"}
                 </button>
-
                 <button
                   type="button"
-                  onClick={() => resetForm()}
-                  className="w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition"
+                  onClick={() => {
+                    resetForm();
+                    setEditingEmployee(null);
+                  }}
+                  className="w-full rounded border-1 border-black/10 text-black hover:bg-gray-800 hover:text-white hover:border-white transition-colors"
                 >
                   Discard
                 </button>
@@ -284,55 +255,109 @@ const AddEmployee = () => {
         </Formik>
       </div>
 
-      {/* ================= Employee List ================= */}
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-3xl">
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      {/* ================= TABLE ================= */}
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px]">
+        <h2 className="text-2xl font-bold text-center mb-4">
           Employee List
         </h2>
 
-        {employees.length === 0 ? (
-          <p className="text-gray-500 text-center">
-            No employees added yet.
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-[700px] w-full table-fixed">
-              <thead className="bg-sky-600 text-white">
-                <tr>
-                  <th className="px-4 py-2 text-left rounded-tl-lg">
-                    Name
+        <div className="overflow-x-auto customs-scrollbar rounded-lg">
+          <table className="w-full min-w-max border border-gray-200 table-auto">
+            <thead className="bg-sky-600 text-white">
+              <tr>
+                {[
+                  "Name",
+                  "Email",
+                  "Phone",
+                  "Citizenship",
+                  "Department",
+                  "Role",
+                  "Action",
+                ].map((h) => (
+                  <th key={h} className="px-4 py-2 text-left ">
+                    {h}
                   </th>
-                  <th className="px-4 py-2 text-left">Email</th>
-                  <th className="px-4 py-2 text-left">Phone</th>
-                  <th className="px-4 py-2 text-left">Citizenship</th>
-                  <th className="px-4 py-2 text-left">Department</th>
-                  <th className="px-4 py-2 text-left rounded-tr-lg">
-                    Role
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {employees.map((emp, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 text-xs sm:text-sm"
-                  >
-                    <td className="px-4 py-2 text-xs">{emp.name}</td>
-                    <td className="px-4 py-2 text-xs">{emp.email}</td>
-                    <td className="px-4 py-2 text-xs">{emp.phone}</td>
-                    <td className="px-4 py-2 text-xs">{emp.citizenId}</td>
-                    <td className="px-4 py-2 text-xs">{emp.department}</td>
-                    <td className="px-4 py-2 text-xs">{emp.role}</td>
-                  </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                  <td className="px-4 py-2 truncate">{emp.name}</td>
+                    <td className="px-4 py-2 truncate">{emp.email}</td>
+                    <td className="px-4 py-2 truncate">{emp.phone}</td>
+                    <td className="px-4 py-2 truncate">{emp.citizenId}</td>
+                    <td className="px-4 py-2 truncate">{emp.department}</td>
+                    <td className="px-4 py-2 truncate">{emp.role}</td>
+                  <td className="px-4 py-2 flex gap-2">
+                    <button
+                      onClick={() => setEditingEmployee(emp)}
+                      className="text-blue-600 hover:text-blue-900 transition-colors"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(emp.id)}
+                      className="text-red-600 hover:text-red-900 transition-colors"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 };
 
+/* ================= SMALL COMPONENTS ================= */
+
+const FieldBlock = ({ label, name, type = "text" }) => (
+  <div className="flex-1">
+    <label className="block mb-1 font-medium">{label}</label>
+    <Field name={name} type={type} className="w-full border px-4 py-2 rounded-lg" />
+    <ErrorMessage name={name} component="div" className="text-red-500 text-sm mt-1" />
+  </div>
+);
+
+const PasswordField = ({ label, name, show, toggle }) => (
+  <div className="flex-1">
+    <label className="block mb-1 font-medium">{label}</label>
+    <div className="relative">
+      <Field
+        name={name}
+        type={show ? "text" : "password"}
+        className="w-full border px-4 py-2 rounded-lg"
+      />
+      <button
+        type="button"
+        onClick={toggle}
+        className="absolute right-3 top-1/2 -translate-y-1/2"
+      >
+        {show ? <LuEyeClosed /> : <FiEye />}
+      </button>
+    </div>
+    <ErrorMessage name={name} component="div" className="text-red-500 text-sm mt-1" />
+  </div>
+);
+
+const SelectBlock = ({ label, name, options }) => (
+  <div className="flex-1">
+    <label className="block mb-1 font-medium">{label}</label>
+    <Field as="select" name={name} className="w-full border px-4 py-2 rounded-lg">
+      <option value="">Select</option>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </Field>
+    <ErrorMessage name={name} component="div" className="text-red-500 text-sm mt-1" />
+  </div>
+);
+
 export default AddEmployee;
+
