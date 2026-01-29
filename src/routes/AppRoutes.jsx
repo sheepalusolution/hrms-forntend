@@ -83,10 +83,11 @@ import Review from "../pages/report/Review";
 // Admin
 import AddEmployee from "../pages/admin/AddEmployee";
 import Unauthorized from "../component/auth/Unauthorized";
-import Auth from "../service/auth";
+
 import Login from "../component/auth/Login";
 import SalaryManagement from "../pages/payroll/SalaryMgmt";
 import PayrollProcessing from "../pages/payroll/PayrollProcessing";
+import Auth from "../service/Auth";
 
 // Unauthorized
 

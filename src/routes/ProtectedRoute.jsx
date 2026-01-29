@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children, feature }) => {
     return <Navigate to="/" replace />;
   }
 
-  const role = currentUser.role;
+  const role = currentUser.role_name;
   const permissions = ROLE_PERMISSIONS[role];
 
   if (!permissions) {

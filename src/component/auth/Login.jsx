@@ -29,61 +29,16 @@ export default function Login() {
     exit: { opacity: 0, y: -20 },
   };
 
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError("");
-
-  //   const email = e.target.email.value.trim();
-  //   const password = e.target.password.value;
-
-  //   try {
-  //     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
-  //     const res = await fetch(`${BASE_URL}/auth/login`, {
-  //       method: "POST",
-  //       credentials: "include", 
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, password }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (!res.ok) {
-  //       setError(data.message || "Invalid credentials");
-  //       return;
-  //     }
-
-  //     // Role authorization check
-  //     if (!ROLE_PERMISSIONS[data.role]) {
-  //       navigate("/unauthorized");
-  //       return;
-  //     }
-
-  //     // Save user / token globally
-  //     login(data);
-
-  //     navigate("/dashboard");
-  //   } catch (err) {
-  //     console.error("Login error:", err);
-  //     setError("Server error. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
   e.preventDefault();
-
   setLoading(true);
   setError("");
 
   const email = e.target.email.value.trim();
   const password = e.target.password.value;
-
   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   try {
-    // Send login request
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,25 +46,24 @@ const handleLogin = async (e) => {
     });
 
     const data = await res.json();
+    console.log("Login response:", data);
 
-    // Handle server errors
     if (!res.ok) {
       setError(data.message || "Invalid email or password");
       return;
     }
 
-    // Normalize role
-    // const role = data.user?.role;
-    // Check if role is authorized
-    if (!ROLE_PERMISSIONS[data.role]) {
+    // Use role_name (string) for permissions
+    const role = data.role_name?.toLowerCase();
+    if (!ROLE_PERMISSIONS[role]) {
+      console.log("Unauthorized role:", role);
       navigate("/unauthorized");
       return;
     }
 
-    // Save authentication globally
-    login(data);
+    // Save user with string role
+    login({ ...data, role });
 
-    // Redirect to dashboard
     navigate("/dashboard");
   } catch (err) {
     console.error("Login error:", err);
@@ -119,49 +73,10 @@ const handleLogin = async (e) => {
   }
 };
 
-  
-//   const handleLogin = async (e) => {
-//   e.preventDefault();
-//   setLoading(true);
-//   setError("");
-
-//   const email = e.target.email.value.trim();
-//   const password = e.target.password.value;
-
-//   try {
-//     const res = await fetch("/api/auth/login", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ email, password }),
-//     });
-
-//     let data = null;
-//     try {
-//       data = await res.json();
-//     } catch {
-//       data = null;
-//     }
-
-//     if (!res.ok) {
-//       setError(data?.message || "Invalid email or password");
-//       return;
-//     }
-
-//     login(data);
-//     navigate("/dashboard");
-
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     setError("Server error. Please try again.");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
 
   return (
     <div className="flex min-h-screen">
-      {/* LEFT */}
+      {/* LEFT - Illustration */}
       <div className="hidden md:flex w-1/2 items-center justify-center bg-gray-100 p-10">
         <AnimatePresence mode="wait">
           <motion.div
@@ -173,9 +88,7 @@ const handleLogin = async (e) => {
             className="text-center"
           >
             <img src={logo} alt="Logo" className="mx-auto mb-6 w-60" />
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Welcome Back
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome Back</h2>
             <p className="text-gray-600 mb-6">
               Login to manage your employees efficiently.
             </p>
@@ -184,7 +97,7 @@ const handleLogin = async (e) => {
         </AnimatePresence>
       </div>
 
-      {/* RIGHT */}
+      {/* RIGHT - Login Form */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-gray-100 p-8">
         <AnimatePresence mode="wait">
           <motion.div
@@ -200,13 +113,9 @@ const handleLogin = async (e) => {
             </div>
 
             <h1 className="text-2xl font-bold text-center mb-2">Login</h1>
-            <p className="text-gray-600 text-center mb-6">
-              Please login to your account
-            </p>
+            <p className="text-gray-600 text-center mb-6">Please login to your account</p>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
@@ -215,8 +124,8 @@ const handleLogin = async (e) => {
                   type="email"
                   name="email"
                   required
-                  className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                   placeholder="you@example.com"
+                  className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -226,8 +135,8 @@ const handleLogin = async (e) => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   required
-                  className="w-full px-4 py-2 pr-10 border rounded-md focus:ring-2 focus:ring-blue-500"
                   placeholder="********"
+                  className="w-full px-4 py-2 pr-10 border rounded-md focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   type="button"
@@ -262,4 +171,3 @@ const handleLogin = async (e) => {
     </div>
   );
 }
-
