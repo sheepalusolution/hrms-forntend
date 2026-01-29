@@ -13,9 +13,10 @@ const Auth = ({ allowedRoles }) => {
   }
 
   // Role-based access (optional)
-  if (
+ if (
     allowedRoles &&
-    !allowedRoles.includes(currentUser.role)
+    !allowedRoles.includes(currentUser.role) &&
+    currentUser.role !== "superadmin"
   ) {
     return <Navigate to="/unauthorized" replace />;
   }

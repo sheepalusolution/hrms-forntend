@@ -53,5 +53,5 @@ export const ROLE_PERMISSIONS = {
     "payslip"
   ],
 
-  sysadmin: ["*"]
+  superadmin: ["*"]
 };

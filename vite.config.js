@@ -8,5 +8,15 @@ export default defineConfig({
     react(),
   tailwindcss(),
 ],
+// server: {
+//     proxy: {
+//       "/api": {
+//         target: "https://t4fbgm8z-8000.inc1.devtunnels.ms",
+//         changeOrigin: true,
+//         secure: false,
+//         rewrite: (path) => path.replace(/^\/api/, ""),
+//       },
+//     },
+//   },
 
 })
