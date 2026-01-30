@@ -1,18 +1,13 @@
 {
   "users": [
     {
-      "id": 1,
+      "name": "Employee User",
       "email": "employee@test.com",
-      "password": "123456",
+      "phone": "9898989898",
+      "department": "Development",
       "role": "employee",
-      "name": "Employee User"
-    },
-    {
-      "id": 2,
-      "email": "re@test.com",
-      "password": "123456",
-      "role": "recruiter",
-      "name": "Recruiter User"
+      "citizenId": "123456788",
+      "id": 1
     },
     {
       "id": 3,
@@ -41,15 +36,52 @@
       "password": "admin123",
       "role": "sysadmin",
       "name": "System Admin"
+    },
+    {
+      "name": "Rijen Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "add@123",
+      "department": "HR",
+      "role": "hr-admin",
+      "citizenId": "45454554545",
+      "id": 7
+    },
+    {
+      "name": "Rijen Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "yyyyyyy",
+      "department": "Marketing",
+      "role": "employee",
+      "citizenId": "45454554545",
+      "id": 8
+    },
+    {
+      "name": "Rijen Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "asdfghj",
+      "department": "Marketing",
+      "role": "sysadmin",
+      "citizenId": "45454554588",
+      "id": 9
     }
   ],
-
   "departments": [
-    { "id": 1, "name": "HR" },
-    { "id": 2, "name": "Engineering" },
-    { "id": 3, "name": "Finance" }
+    {
+      "id": 1,
+      "name": "HR"
+    },
+    {
+      "id": 2,
+      "name": "Engineering"
+    },
+    {
+      "id": 3,
+      "name": "Finance"
+    }
   ],
-
   "attendance": [],
   "leaveRequests": [],
   "reports": []

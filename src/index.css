@@ -34,3 +34,44 @@
   background-color: #026da2; /* darker on hover (blue-600) */
   border: 2px solid #026da2;
 }
+
+
+/* For Webkit browsers (Chrome, Safari, Edge) */
+.customs-scrollbar::-webkit-scrollbar {
+  height: 6px; /* horizontal scrollbar height - make it thin */
+  width: 8px;  /* vertical scrollbar width */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* track color */
+  border-radius: 4px;
+}
+
+.customs-scrollbar::-webkit-scrollbar-thumb {
+  background: #026da2; /* thumb color (sky-500) */
+  border-radius: 4px;
+}
+
+.customs-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #026da2; /* darker on hover */
+}
+
+/* Firefox scrollbar */
+.customs-scrollbar {
+  scrollbar-width: thin; /* makes it thin */
+  scrollbar-color: #026da2 #f1f1f1;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
