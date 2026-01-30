@@ -29,7 +29,7 @@ export const ROLE_PERMISSIONS = {
     "payslip"
   ],
 
-  "hr-admin": [
+  "hr_admin": [
     "dashboard",
     "employees",
     "attendance",
