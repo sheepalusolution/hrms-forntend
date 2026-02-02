@@ -46,7 +46,7 @@ const Dashboard = () => {
 
 
   return (
-     <div className="min-h-screen bg-gray-100 px-15 py-5">
+     <div className="min-h-screen bg-gray-100 px-15 py-5 top-0">
       {/* Dashboard Header */}
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard home</h1>
 
