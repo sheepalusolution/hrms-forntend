@@ -47,7 +47,6 @@ export const ROLE_PERMISSIONS = {
     "attendance",
     "finance",
     "profile",
-    "attendance",
     "salary-mgmt",
     "payroll-processing",
     "payslip"

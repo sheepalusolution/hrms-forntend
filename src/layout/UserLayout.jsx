@@ -2,14 +2,25 @@ import React, { useState, useEffect } from 'react';
 import Header from '../component/Header';
 import Sidebar from '../component/Sidebar';
 import { Outlet, useLocation } from 'react-router-dom';
+import SkeletonLoader from '../component/SkeletonLoader';
 
 const UserLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0); 
   }, [location.pathname]);
+
+   useEffect(() => {
+    // Simulate page load / API call
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800); // adjust duration as needed
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -22,7 +33,8 @@ const UserLayout = () => {
         />
 
         <main className="flex-1 bg-gray-50 md:ml-75">
-          <Outlet />
+          {/* <Outlet /> */}
+           {loading ? <SkeletonLoader /> : <Outlet /> }
         </main>
       </div>
     </div>
