@@ -1,13 +1,18 @@
 {
   "users": [
     {
-      "name": "Employee User",
+      "id": 1,
       "email": "employee@test.com",
-      "phone": "9898989898",
-      "department": "Development",
+      "password": "123456",
       "role": "employee",
-      "citizenId": "123456788",
-      "id": 1
+      "name": "Employee User"
+    },
+    {
+      "id": 2,
+      "email": "re@test.com",
+      "password": "123456",
+      "role": "recruiter",
+      "name": "Recruiter User"
     },
     {
       "id": 3,
@@ -68,20 +73,13 @@
       "id": 9
     }
   ],
+
   "departments": [
-    {
-      "id": 1,
-      "name": "HR"
-    },
-    {
-      "id": 2,
-      "name": "Engineering"
-    },
-    {
-      "id": 3,
-      "name": "Finance"
-    }
+    { "id": 1, "name": "HR" },
+    { "id": 2, "name": "Engineering" },
+    { "id": 3, "name": "Finance" }
   ],
+
   "attendance": [],
   "leaveRequests": [],
   "reports": []
