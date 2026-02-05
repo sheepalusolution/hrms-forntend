@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +7,10 @@ import { LuEyeClosed } from "react-icons/lu";
 import { FiEye } from "react-icons/fi";
 import ConfirmModal from "../../component/ConfirmModel";
 import LogoLoading from "../../component/logoLoading";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { registerUser } from "../../service/AuthService";
+
 
 const AddEmployee = () => {
   const [employees, setEmployees] = useState([]);
@@ -14,115 +18,147 @@ const AddEmployee = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success", // success | error
-  });
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
+  const toastShown = useRef(false);
 
-    setTimeout(() => {
-      setToast({ show: false, message: "", type });
-    }, 2500);
-  };
+
 
   /* ================= FETCH EMPLOYEES ================= */
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await fetch("http://localhost:3030/users");
-        const data = await res.json();
-        setEmployees(data);
-      } catch (err) {
-        console.error(err);
-        showToast("Failed to fetch employees", "error");
-      } finally{
-        setLoading(false);
+  const fetchEmployees = async () => {
+    try {
+      const res = await fetch("http://localhost:3030/users");
+      if (!res.ok) throw new Error("Fetch failed");
+      const data = await res.json();
+      setEmployees(data);
+    } catch (err) {
+      if (!toastShown.current) {
+        toast.error("Failed to fetch employees");
+        toastShown.current = true;
       }
-    };
-    fetchEmployees();
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEmployees();
+}, []);
 
   /* ================= VALIDATION ================= */
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
 
-    password: editingEmployee
-      ? Yup.string()
-      : Yup.string().min(6).required("Password is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
 
-    confirmPassword: editingEmployee
-      ? Yup.string()
-      : Yup.string()
-          .oneOf([Yup.ref("password")], "Passwords must match")
-          .required("Confirm Password is required"),
+  password: editingEmployee
+    ? Yup.string()
+    : Yup.string().min(6).required("Password is required"),
 
-    phone: Yup.string()
-      .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
-      .required("Phone is required"),
+  confirmPassword: editingEmployee
+    ? Yup.string()
+    : Yup.string()
+        .oneOf([Yup.ref("password")], "Passwords must match")
+        .required("Confirm Password is required"),
 
-    department: Yup.string().required("Department is required"),
-    role: Yup.string().required("Role is required"),
+  phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
+    .required("Phone is required"),
 
-    citizenId: Yup.string()
-      .matches(/^\d+$/, "Citizen ID must be numeric")
-      .min(8)
-      .max(12)
-      .required("Citizen ID is required"),
-  });
+  department: Yup.string().required("Department is required"),
+  role: Yup.string().required("Role is required"),
+
+  gender: Yup.string()
+    .oneOf(["Male", "Female"])
+    .required("Gender is required"),
+
+  dob: Yup.date()
+    .required("Date of birth is required"),
+
+  nationality: Yup.string().required("Nationality is required"),
+
+  employee_type: Yup.string()
+    .oneOf(["Full_time", "Part_time","Intern"])
+    .required("Employee type is required"),
+
+  address: Yup.string().required("Address is required"),
+});
+
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async (values, { resetForm }) => {
-    const { confirmPassword, ...payload } = values;
+  const id = toast.loading(
+    editingEmployee ? "Updating employee..." : "Registering employee..."
+  );
 
-    // Do not update password if empty during edit
-    if (editingEmployee && !payload.password) {
+  try {
+
+    const employeeTypeMap = {
+        "Full_time": "full_time",
+        // "Part_time": "part_time",
+        "intern": "intern",
+      };
+
+    // 🔁 transform form values → backend payload
+    const payload = {
+      first_name: values.firstName?.trim(),
+      last_name: values.lastName?.trim(),
+      email: values.email?.trim().toLowerCase(),
+      password: values.password, // required only on create
+
+      phone: values.phone,
+      nationality: values.nationality,
+      address: values.address,
+
+      gender: values.gender.toLowerCase(), // "male" | "female"
+      dob: values.dob, // YYYY-MM-DD (already fine)
+
+      department_name: values.department,
+      role_name: values.role,
+      employee_type: employeeTypeMap[values.employee_type], 
+
+      // ⚠️ backend-required but UI-independent fields
+      deparment_id: 4,   // backend expects this
+      role_id: 3,        // backend expects this
+      join_date: new Date().toISOString().slice(0, 10),
+      end_date: new Date().toISOString().slice(0, 10),
+    };
+    if (editingEmployee) {
       delete payload.password;
     }
 
-    try {
-      let res;
-      // if (!res.ok) {
-      //   throw new Error("Request failed");
-      // }
 
-      if (editingEmployee) {
-        res = await fetch(
-          `http://localhost:3030/users/${editingEmployee.id}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
-      } else {
-        res = await fetch("http://localhost:3030/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
 
-      const savedUser = await res.json();
+    // 🔥 CALL AXIOS SERVICE (NO fetch)
+    console.log("API base:", import.meta.env.VITE_BACKEND_URL);
 
-      setEmployees((prev) =>
-        editingEmployee
-          ? prev.map((emp) =>
-              emp.id === savedUser.id ? savedUser : emp
-            )
-          : [...prev, savedUser]
-      );
+    console.log("Register payload:", payload);
 
-      resetForm();
-      setEditingEmployee(null);
-      showToast(editingEmployee ? "Employee updated!" : "Employee added!");
-    } catch (err) {
-      console.error(err);
-      showToast("Failed to save employee","error");
-    }
-  };
+    const res = await registerUser(payload);
+
+    // Optional: update local table if needed
+    setEmployees((prev) => [...prev, res]);
+
+    resetForm();
+    setEditingEmployee(null);
+
+    toast.update(id, {
+      render: "Employee registered successfully!",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+  } catch (err) {
+    console.error(err);
+    toast.update(id, {
+      render:
+        err.response?.data?.message || "Failed to register employee",
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
+  }
+};
+
 
   /* ================= DELETE ================= */
   const [confirm, setConfirm] = useState({
@@ -140,10 +176,10 @@ const AddEmployee = () => {
           method: "DELETE",
         });
         setEmployees(prev => prev.filter(e => e.id !== id));
-        showToast("Employee deleted successfully", "success");
+        toast.succ("Employee deleted successfully", "success");
       } catch (err) {
         console.error(err);
-        showToast("Delete failed", "error");
+        toast.error("Delete failed", "error");
       } finally {
         setConfirm({ show: false, message: "", onConfirm: null });
       }
@@ -152,7 +188,7 @@ const AddEmployee = () => {
 };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 bg-gray-100 p-6">
+    <div className="flex flex-col lg:flex-row gap-6 bg-gray-100 p-4 sm:p-6">
       <ConfirmModal
         show={confirm.show}
         message={confirm.message}
@@ -160,15 +196,14 @@ const AddEmployee = () => {
         onConfirm={confirm.onConfirm}
       />
 
-      {toast.show && (
-        <div
-          className={`fixed top-14 left-1/2 z-50 px-5 py-2 rounded shadow-lg
-            text-white transition-all duration-300 -translate-x-1/2 w-96 text-center
-            ${toast.type === "success" ? "bg-sky-600" : "bg-black"}`}
-        >
-          {toast.message}
-        </div>
-      )}
+      <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        hideProgressBar
+        newestOnTop
+        pauseOnHover
+        theme="colored"
+      />
       {/* ================= FORM ================= */}
       <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-lg">
         <h2 className="text-2xl font-bold text-center mb-6">
@@ -178,25 +213,34 @@ const AddEmployee = () => {
         <Formik
           enableReinitialize
           initialValues={{
-            name: editingEmployee?.name || "",
+            firstName: editingEmployee?.first_Name || "",
+            lastName: editingEmployee?.last_Name || "",
             email: editingEmployee?.email || "",
             phone: editingEmployee?.phone || "",
             password: "",
             confirmPassword: "",
-            department: editingEmployee?.department || "",
-            role: editingEmployee?.role || "",
+            department: editingEmployee?.department_name || "",
+            role: editingEmployee?.role_name || "",
             citizenId: editingEmployee?.citizenId || "",
+            gender: editingEmployee?.gender || "",
+            dob: editingEmployee?.dob || "",
+            nationality: editingEmployee?.nationality || "",
+            employee_type: editingEmployee?.employee_type || "",
+            address: editingEmployee?.address || "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ resetForm }) => (
             <Form className="space-y-4">
-              <FieldBlock label="Name" name="name" />
-              <FieldBlock label="Email" name="email" type="email" />
+              <div className="flex flex-col sm:flex-row gap-4">
+                <FieldBlock label="First Name" name="firstName" />
+                <FieldBlock label="Last Name" name="lastName" />
+              </div>
+                <FieldBlock label="Email" name="email" type="email" />
 
               {!editingEmployee && (
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <PasswordField
                     label="Password"
                     name="password"
@@ -214,12 +258,21 @@ const AddEmployee = () => {
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <FieldBlock label="Nationality" name="nationality" />
+                <FieldBlock label="Address" name="address" />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <SelectBlock label="Gender" name="gender" options={["Male","Female"]} />
+                <FieldBlock label="Date of Birth" name="dob" type="date" />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
                 <FieldBlock label="Phone" name="phone" />
                 <FieldBlock label="Citizenship" name="citizenId" />
               </div>
 
-              <div className="flex gap-4">
+              <div className="grid grid-cols-2 gap-4 ">
                 <SelectBlock
                   label="Department"
                   name="department"
@@ -235,9 +288,10 @@ const AddEmployee = () => {
                     "sysadmin",
                   ]}
                 />
+                <SelectBlock label="Employee Type" name="employee_type" options={["Full_time","Part_time","Intern"]} />
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   type="submit"
                   className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition-colors duration-300"
@@ -267,17 +321,23 @@ const AddEmployee = () => {
         </h2>
 
         <div className="overflow-x-auto customs-scrollbar rounded-lg">
-          <table className="w-full min-w-max border border-gray-200 table-auto">
-            <thead className="bg-sky-600 text-white">
+          <table className="w-full border border-gray-200 table-auto">
+            <thead className="bg-sky-600 text-white text-xs sm:text-sm">
               <tr>
                 {[
                   "Name",
                   "Email",
                   "Phone",
                   "Citizenship",
+                  "Gender",
+                  "Date of Birth",
+                  "Address",
+                  "Nationality",
+                  "Employee Type",
                   "Department",
                   "Role",
                   "Action",
+
                 ].map((h) => (
                   <th key={h} className="px-4 py-2 text-left ">
                     {h}
@@ -285,7 +345,7 @@ const AddEmployee = () => {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs sm:text-sm">
              {loading ? (
               <tr>
                 <td colSpan="7" className="text-center py-4 text-gray-500 italic">
@@ -295,10 +355,15 @@ const AddEmployee = () => {
               ) : employees.length > 0 ? 
               (employees.map((emp) => (
                  <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td className="px-4 py-2 truncate">{emp.name}</td>
+                    <td className="px-4 py-2 truncate">{emp.firstName} {emp.lastName}</td>
                       <td className="px-4 py-2 truncate">{emp.email}</td>
                       <td className="px-4 py-2 truncate">{emp.phone}</td>
                       <td className="px-4 py-2 truncate">{emp.citizenId}</td>
+                      <td className="px-4 py-2 truncate">{emp.gender}</td>
+                      <td className="px-4 py-2 truncate">{emp.dob}</td>
+                      <td className="px-4 py-2 truncate">{emp.address}</td>
+                      <td className="px-4 py-2 truncate">{emp.nationality}</td>
+                      <td className="px-4 py-2 truncate">{emp.employee_type}</td>
                       <td className="px-4 py-2 truncate">{emp.department}</td>
                       <td className="px-4 py-2 truncate">{emp.role}</td>
                     <td className="px-4 py-2 flex gap-2">
@@ -382,4 +447,3 @@ const SelectBlock = ({ label, name, options }) => (
 );
 
 export default AddEmployee;
-

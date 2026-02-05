@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -7,93 +7,53 @@ import { LuEyeClosed } from "react-icons/lu";
 import { FiEye } from "react-icons/fi";
 import ConfirmModal from "../../component/ConfirmModel";
 import LogoLoading from "../../component/logoLoading";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { getAllEmployees } from "../../service/AuthService";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [editingEmployee, setEditingEmployee] = useState(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success", // success | error
-  });
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-
-    setTimeout(() => {
-      setToast({ show: false, message: "", type });
-    }, 2500);
-  };
+  const toastShown = useRef(false);
 
   /* ================= FETCH EMPLOYEES ================= */
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await fetch("http://localhost:3030/users");
-        const data = await res.json();
-        setEmployees(data);
-      } catch (err) {
-        console.error(err);
-        showToast("Something went wrong", "error");
-      } finally{
-        setLoading(false);
-      }
-    };
-    fetchEmployees();
-  }, []);
-
-  /* ================= SUBMIT ================= */
-  const handleSubmit = async (values, { resetForm }) => {
-    const { confirmPassword, ...payload } = values;
-
-    // Do not update password if empty during edit
-    if (editingEmployee && !payload.password) {
-      delete payload.password;
-    }
-
+useEffect(() => {
+  const fetchEmployees = async () => {
     try {
-      let res;
-      // if (!res.ok) {
-      //   throw new Error("Request failed");
-      // }
+      const data = await getAllEmployees();
 
-      if (editingEmployee) {
-        res = await fetch(
-          `http://localhost:3030/users/${editingEmployee.id}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
-      } else {
-        res = await fetch("http://localhost:3030/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
+      const mappedEmployees = data.map(emp => ({
+        id: emp.id,
+        firstName: emp.first_name,
+        lastName: emp.last_name,
+        email: emp.email,
+        phone: emp.ph_no,
+        citizenId: emp.user_id,
+        gender: emp.gender,
+        dob: emp.dob,
+        address: emp.address,
+        nationality: emp.nationality,
+        employee_type: emp.employee_type,
+        department: emp.department_id,
+        role: emp.role_name  // ✅ this is correct
+      }));
 
-      const savedUser = await res.json();
-
-      setEmployees((prev) =>
-        editingEmployee
-          ? prev.map((emp) =>
-              emp.id === savedUser.id ? savedUser : emp
-            )
-          : [...prev, savedUser]
-      );
-
-      resetForm();
-      setEditingEmployee(null);
-      showToast(editingEmployee ? "Employee updated!" : "Employee added!");
+      setEmployees(mappedEmployees);
     } catch (err) {
-      console.error(err);
-      showToast("Failed to save employee","error");
+      if (!toastShown.current) {
+        toast.error("Failed to fetch employees");
+        toastShown.current = true;
+      }
+    } finally {
+      setLoading(false);
     }
   };
+
+  fetchEmployees();
+}, []);
+  /* ================= SUBMIT ================= */
+  
 
   /* ================= DELETE ================= */
   const [confirm, setConfirm] = useState({
@@ -111,10 +71,10 @@ const Employees = () => {
           method: "DELETE",
         });
         setEmployees(prev => prev.filter(e => e.id !== id));
-        showToast("Employee deleted successfully", "success");
+        toast.success("Employee deleted successfully", "success");
       } catch (err) {
         console.error(err);
-        showToast("Delete failed", "error");
+        toast.error("Delete failed", "error");
       } finally {
         setConfirm({ show: false, message: "", onConfirm: null });
       }
@@ -131,17 +91,16 @@ const Employees = () => {
         onConfirm={confirm.onConfirm}
       />
 
-      {toast.show && (
-        <div
-          className={`fixed top-14 left-1/2 z-50 px-5 py-2 rounded shadow-lg
-            text-white transition-all duration-300 -translate-x-1/2 w-96 text-center
-            ${toast.type === "success" ? "bg-sky-600" : "bg-black"}`}
-        >
-          {toast.message}
-        </div>
-      )}      
+      <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        hideProgressBar
+        newestOnTop
+        pauseOnHover
+        theme="colored"
+      />    
       {/* ================= TABLE ================= */}
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full mx-auto">
+      <div className="bg-white p-6 rounded-lg shadow-lg mx-auto w-full max-w-6xl">
         <h2 className="text-2xl font-bold text-center mb-4">
           Employee List
         </h2>
@@ -155,9 +114,16 @@ const Employees = () => {
                   "Email",
                   "Phone",
                   "Citizenship",
+                  "Gender",
+                  "Date of Birth",
+                  "Address",
+                  "Nationality",
+                  "Employee Type",
+                  "Status",
                   "Department",
                   "Role",
                   "Action",
+
                 ].map((h) => (
                   <th key={h} className="px-4 py-2 text-left ">
                     {h}
@@ -175,10 +141,16 @@ const Employees = () => {
               ) : employees.length > 0 ? 
               (employees.map((emp) => (
                  <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td className="px-4 py-2 truncate">{emp.name}</td>
+                    <td className="px-4 py-2 truncate">{emp.firstName} {emp.lastName}</td>
                       <td className="px-4 py-2 truncate">{emp.email}</td>
                       <td className="px-4 py-2 truncate">{emp.phone}</td>
                       <td className="px-4 py-2 truncate">{emp.citizenId}</td>
+                      <td className="px-4 py-2 truncate">{emp.gender}</td>
+                      <td className="px-4 py-2 truncate">{emp.dob}</td>
+                      <td className="px-4 py-2 truncate">{emp.address}</td>
+                      <td className="px-4 py-2 truncate">{emp.nationality}</td>
+                      <td className="px-4 py-2 truncate">{emp.employee_type}</td>
+                      <td className="px-4 py-2 truncate">{emp.status}</td>
                       <td className="px-4 py-2 truncate">{emp.department}</td>
                       <td className="px-4 py-2 truncate">{emp.role}</td>
                     <td className="px-4 py-2 flex gap-2">
