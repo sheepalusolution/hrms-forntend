@@ -105,7 +105,7 @@ const AddEmployee = () => {
       email: values.email?.trim().toLowerCase(),
       password: values.password, // required only on create
 
-      phone: values.phone,
+      ph_no: values.phone,
       nationality: values.nationality,
       address: values.address,
 
@@ -216,7 +216,7 @@ const AddEmployee = () => {
             firstName: editingEmployee?.first_Name || "",
             lastName: editingEmployee?.last_Name || "",
             email: editingEmployee?.email || "",
-            phone: editingEmployee?.phone || "",
+            phone: editingEmployee?.ph_no || "",
             password: "",
             confirmPassword: "",
             department: editingEmployee?.department_name || "",

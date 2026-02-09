@@ -9,7 +9,8 @@ import ConfirmModal from "../../component/ConfirmModel";
 import LogoLoading from "../../component/logoLoading";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAllEmployees } from "../../service/AuthService";
+
+// import { getAllEmployees } from "../../service/AuthService";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
