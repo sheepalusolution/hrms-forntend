@@ -10,6 +10,7 @@ import LogoLoading from "../../component/logoLoading";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerUser } from "../../service/AuthService";
+import { getAllEmployees } from "../../service/EmployeesService";
 
 
 const AddEmployee = () => {
@@ -26,22 +27,38 @@ const AddEmployee = () => {
   useEffect(() => {
   const fetchEmployees = async () => {
     try {
-      const res = await fetch("http://localhost:3030/users");
-      if (!res.ok) throw new Error("Fetch failed");
-      const data = await res.json();
-      setEmployees(data);
-    } catch (err) {
-      if (!toastShown.current) {
-        toast.error("Failed to fetch employees");
-        toastShown.current = true;
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+      const data = await getAllEmployees();
 
-  fetchEmployees();
-}, []);
+      const mappedEmployees = data.map(emp => ({
+        id: emp.id,
+        firstName: emp.first_name,
+        lastName: emp.last_name,
+        email: emp.email,
+        phone: emp.ph_no,
+        citizenId: emp.user_id,
+        gender: emp.gender,
+        dob: emp.dob,
+        address: emp.address,
+        nationality: emp.nationality,
+        employee_type: emp.employee_type,
+        department: emp.department_id,
+        role: emp.role_id, // was emp.role_name
+      }));
+      console.log("Fetched employees:", data); 
+
+      setEmployees(mappedEmployees);
+      } catch (err) {
+        if (!toastShown.current) {
+          toast.error("Failed to fetch employees");
+          toastShown.current = true;
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
 
   /* ================= VALIDATION ================= */
   const validationSchema = Yup.object({
@@ -329,10 +346,6 @@ const AddEmployee = () => {
                   "Email",
                   "Phone",
                   "Citizenship",
-                  "Gender",
-                  "Date of Birth",
-                  "Address",
-                  "Nationality",
                   "Employee Type",
                   "Department",
                   "Role",
@@ -359,10 +372,6 @@ const AddEmployee = () => {
                       <td className="px-4 py-2 truncate">{emp.email}</td>
                       <td className="px-4 py-2 truncate">{emp.phone}</td>
                       <td className="px-4 py-2 truncate">{emp.citizenId}</td>
-                      <td className="px-4 py-2 truncate">{emp.gender}</td>
-                      <td className="px-4 py-2 truncate">{emp.dob}</td>
-                      <td className="px-4 py-2 truncate">{emp.address}</td>
-                      <td className="px-4 py-2 truncate">{emp.nationality}</td>
                       <td className="px-4 py-2 truncate">{emp.employee_type}</td>
                       <td className="px-4 py-2 truncate">{emp.department}</td>
                       <td className="px-4 py-2 truncate">{emp.role}</td>

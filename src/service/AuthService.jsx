@@ -39,5 +39,29 @@ export const registerUser = async (data) => {
   }
 };
 
+/**
+ * Refresh auth token using refresh token
+ * @param {string} refreshToken
+ * @returns {Promise<string>} new auth token
+ */
+export const refreshToken = async (refreshToken) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL} refresh`,
+      { refresh_token: refreshToken },
+      { headers: { "Content-Type": "application/json", Accept: "application/json" } }
+    );
+
+    return response.data; // backend usually returns { access_token, refresh_token, ... }
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data?.message || "Failed to refresh token";
+    }
+    throw "Network error. Failed to refresh token";
+  }
+};
+
+
+
 
 
