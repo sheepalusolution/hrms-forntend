@@ -332,78 +332,59 @@ const AddEmployee = () => {
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px]">
-        <h2 className="text-2xl font-bold text-center mb-4">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-3xl">
+        <h2 className="text-2xl font-bold mb-4 text-center">
           Employee List
         </h2>
 
-        <div className="overflow-x-auto customs-scrollbar rounded-lg">
-          <table className="w-full border border-gray-200 table-auto">
-            <thead className="bg-sky-600 text-white text-xs sm:text-sm">
-              <tr>
-                {[
-                  "Name",
-                  "Email",
-                  "Phone",
-                  "Citizenship",
-                  "Employee Type",
-                  "Department",
-                  "Role",
-                  "Action",
-
-                ].map((h) => (
-                  <th key={h} className="px-4 py-2 text-left ">
-                    {h}
+        {employees.length === 0 ? (
+          <p className="text-gray-500 text-center">
+            No employees added yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-[700px] w-full table-fixed">
+              <thead className="bg-sky-600 text-white">
+                <tr>
+                  <th className="px-4 py-2 text-left rounded-tl-lg">
+                    Name
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="text-xs sm:text-sm">
-             {loading ? (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500 italic">
-                  <LogoLoading />
-                </td>
-              </tr>
-              ) : employees.length > 0 ? 
-              (employees.map((emp) => (
-                 <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td className="px-4 py-2 truncate">{emp.firstName} {emp.lastName}</td>
-                      <td className="px-4 py-2 truncate">{emp.email}</td>
-                      <td className="px-4 py-2 truncate">{emp.phone}</td>
-                      <td className="px-4 py-2 truncate">{emp.citizenId}</td>
-                      <td className="px-4 py-2 truncate">{emp.employee_type}</td>
-                      <td className="px-4 py-2 truncate">{emp.department}</td>
-                      <td className="px-4 py-2 truncate">{emp.role}</td>
-                    <td className="px-4 py-2 flex gap-2">
-                      <button
-                        onClick={() => setEditingEmployee(emp)}
-                        className="text-blue-600 hover:text-blue-900 transition-colors"
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(emp.id)}
-                        className="text-red-600 hover:text-red-900 transition-colors"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </td>
-                  </tr>
-                )) 
-              ): (
+                  <th className="px-4 py-2 text-left">Email</th>
+                  <th className="px-4 py-2 text-left">Phone</th>
+                  <th className="px-4 py-2 text-left">Citizenship</th>
+                  <th className="px-4 py-2 text-left">Department</th>
+                  <th className="px-4 py-2 text-left rounded-tr-lg">
+                    Role
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {loading ? (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="text-center py-4 text-gray-500 italic"
-                    >
-                      No employees found
+                    <td colSpan="8" className="text-center py-4 text-gray-500 italic">
+                      <LogoLoading />
                     </td>
                   </tr>
-                )}
-            </tbody>
-          </table>
-        </div>
+                ):
+                employees.map((emp) => (
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-gray-50 text-xs sm:text-sm"
+                  >
+                    <td className="px-4 py-2 text-xs">{emp.name}</td>
+                    <td className="px-4 py-2 text-xs">{emp.email}</td>
+                    <td className="px-4 py-2 text-xs">{emp.phone}</td>
+                    <td className="px-4 py-2 text-xs">{emp.citizenId}</td>
+                    <td className="px-4 py-2 text-xs">{emp.department}</td>
+                    <td className="px-4 py-2 text-xs">{emp.role}</td>
+                  </tr>
+                ))
+                }
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
