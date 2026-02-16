@@ -1,11 +1,15 @@
 {
   "users": [
     {
-      "id": 1,
-      "email": "employee@test.com",
-      "password": "123456",
-      "role": "employee",
-      "name": "Employee User"
+      "firstName": "lastgod",
+      "lastName": "rj",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "",
+      "department": "HR",
+      "role": "manager",
+      "citizenId": "45454554588",
+      "id": 1
     },
     {
       "id": 2,
@@ -29,13 +33,6 @@
       "name": "HR Admin"
     },
     {
-      "id": 5,
-      "email": "finance@test.com",
-      "password": "123456",
-      "role": "financer",
-      "name": "Finance User"
-    },
-    {
       "id": 6,
       "email": "admin@test.com",
       "password": "admin123",
@@ -46,40 +43,54 @@
       "name": "Rijen Maharjan",
       "email": "maharjanr353@gmail.com",
       "phone": "9841234567",
-      "password": "add@123",
+      "password": "",
       "department": "HR",
-      "role": "hr-admin",
-      "citizenId": "45454554545",
-      "id": 7
-    },
-    {
-      "name": "Rijen Maharjan",
-      "email": "maharjanr353@gmail.com",
-      "phone": "9841234567",
-      "password": "yyyyyyy",
-      "department": "Marketing",
-      "role": "employee",
-      "citizenId": "45454554545",
-      "id": 8
-    },
-    {
-      "name": "Rijen Maharjan",
-      "email": "maharjanr353@gmail.com",
-      "phone": "9841234567",
-      "password": "asdfghj",
-      "department": "Marketing",
-      "role": "sysadmin",
+      "role": "manager",
       "citizenId": "45454554588",
       "id": 9
+    },
+    {
+      "firstName": "Rijen",
+      "lastName": "Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "1234567",
+      "department": "Development",
+      "role": "hr-admin",
+      "citizenId": "45454554545",
+      "id": 10
+    },
+    {
+      "firstName": "Rijen",
+      "lastName": "Maharjan",
+      "email": "maharjanr353@gmail.com",
+      "phone": "9841234567",
+      "password": "123456",
+      "department": "Marketing",
+      "role": "hr-admin",
+      "citizenId": "45454554545",
+      "gender": "Male",
+      "dob": "2003-04-18",
+      "nationality": "nepal",
+      "employee_type": "Full-time",
+      "address": "Hersiddy, lalitpur",
+      "id": 11
     }
   ],
-
   "departments": [
-    { "id": 1, "name": "HR" },
-    { "id": 2, "name": "Engineering" },
-    { "id": 3, "name": "Finance" }
+    {
+      "id": 1,
+      "name": "HR"
+    },
+    {
+      "id": 2,
+      "name": "Engineering"
+    },
+    {
+      "id": 3,
+      "name": "Finance"
+    }
   ],
-
   "attendance": [],
   "leaveRequests": [],
   "reports": []

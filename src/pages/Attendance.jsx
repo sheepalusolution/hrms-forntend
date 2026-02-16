@@ -49,7 +49,7 @@ const Attendance = () => {
         </h1>
 
         {/* Workplace */}
-        <div className="bg-white rounded-xl shadow p-4 mb-4">
+        {/* <div className="bg-white rounded-xl shadow p-4 mb-4">
           <p className="text-sm font-medium text-gray-600 mb-2">
             Workplace
           </p>
@@ -63,7 +63,7 @@ const Attendance = () => {
             </div>
             <FiChevronDown className="text-gray-500" />
           </div>
-        </div>
+        </div> */}
 
         {/* Shift Duration */}
         <div className="bg-white rounded-xl shadow p-4 mb-4">

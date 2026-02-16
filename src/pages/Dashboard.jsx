@@ -10,39 +10,39 @@ const Dashboard = () => {
   const [dataPoints, setDataPoints] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    fetch("https://canvasjs.com/data/gallery/react/nifty-stock-price.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const dps = data.map(item => ({
-          x: new Date(item.x),
-          y: item.y
-        }));
+  // useEffect(() => {
+  //   fetch("https://canvasjs.com/data/gallery/react/nifty-stock-price.json")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       const dps = data.map(item => ({
+  //         x: new Date(item.x),
+  //         y: item.y
+  //       }));
 
-        setDataPoints(dps);
-        setIsLoaded(true);
-      });
-  }, []);
+  //       setDataPoints(dps);
+  //       setIsLoaded(true);
+  //     });
+  // }, []);
 
-    const chartOptions = {
-    theme: "light2",
-    title: {
-      text: "Revenue Trend"
-    },
-    axisX: {
-      valueFormatString: "MMM YYYY"
-    },
-    axisY: {
-      prefix: "Rs",
-      includeZero: false
-    },
-    data: [
-      {
-        type: "line",
-        dataPoints: dataPoints
-      }
-    ]
-  };
+  //   const chartOptions = {
+  //   theme: "light2",
+  //   title: {
+  //     text: "Revenue Trend"
+  //   },
+  //   axisX: {
+  //     valueFormatString: "MMM YYYY"
+  //   },
+  //   axisY: {
+  //     prefix: "Rs",
+  //     includeZero: false
+  //   },
+  //   data: [
+  //     {
+  //       type: "line",
+  //       dataPoints: dataPoints
+  //     }
+  //   ]
+  // };
 
 
   return (
@@ -106,52 +106,19 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-
-        {/* Desktop View - Table */}
-        {/* <div className="hidden sm:block">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2 px-4 text-gray-600">Name</th>
-                <th className="py-2 px-4 text-gray-600">Email</th>
-                <th className="py-2 px-4 text-gray-600">Role</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">John Doe</td>
-                <td className="py-2 px-4">john@example.com</td>
-                <td className="py-2 px-4">Admin</td>
-              </tr>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">Jane Smith</td>
-                <td className="py-2 px-4">jane@example.com</td>
-                <td className="py-2 px-4">User</td>
-              </tr>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">Mark Johnson</td>
-                <td className="py-2 px-4">mark@example.com</td>
-                <td className="py-2 px-4">Manager</td>
-              </tr>
-            </tbody>
-          </table>
-        </div> */}
       </div>    
 
       {/* Example chart placeholder */}
-      <div className="bg-white shadow rounded-lg p-6 mt-8">
+      {/* <div className="bg-white shadow rounded-lg p-6 mt-8">
         <h2 className="text-xl font-bold mb-4">Revenue Chart</h2>
-        {/* <div className="h-64 bg-gray-100 flex items-center justify-center text-gray-400">
-          Chart Placeholder
-        </div> */}
         {isLoaded ? (
           <CanvasJSChart options={chartOptions} />
         ) : (
           <p className="text-gray-400">Loading chart...</p>
         )}
 
-      </div>
+      </div> */}
+      
     </div>
   );
 };

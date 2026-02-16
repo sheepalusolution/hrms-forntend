@@ -11,7 +11,7 @@ import ForgotPassword from "../component/auth/ForgotPassword";
 import ProtectedRoute from "../routes/ProtectedRoute";
 
 // Pages
-import Dashboard from "../pages/DashBoard";
+
 import AboutUs from "../pages/AboutUs";
 import Setting from "../pages/Setting";
 import Profile from "../pages/Profile";
@@ -33,6 +33,8 @@ import Login from "../component/auth/Login";
 import SalaryManagement from "../pages/payroll/SalaryMgmt";
 import PayrollProcessing from "../pages/payroll/PayrollProcessing";
 import Auth from "../service/Auth";
+import Employees from "../pages/admin/Employees";
+import Dashboard from "../pages/Dashboard";
 
 // Unauthorized
 
@@ -110,6 +112,15 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute feature="employees">
                 <AddEmployee />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/Employees"
+            element={
+              <ProtectedRoute feature="employees">
+                <Employees />
               </ProtectedRoute>
             }
           />
