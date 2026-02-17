@@ -34,7 +34,7 @@ export const registerUser = async (data) => {
     });
     return res.data;
   } catch (err) {
-    console.error("Axios error:", err);
+    console.error("Axios error:", err.response?.data);
     throw err;
   }
 };
