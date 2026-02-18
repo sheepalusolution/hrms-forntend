@@ -123,9 +123,9 @@ const AddEmployee = () => {
       role_name: values.role,
       employee_type: employeeTypeMap[values.employee_type] || values.employee_type,
 
-      // ⚠️ backend-required but UI-independent fields
-      deparment_id: 4,   // backend expects this
-      role_id: 3,        // backend expects this
+      // backend-required but UI-independent fields
+      deparment_id: 4,  
+      role_id: 3,       
       join_date: new Date().toISOString().slice(0, 10),
       end_date: new Date().toISOString().slice(0, 10),
     };
@@ -133,16 +133,12 @@ const AddEmployee = () => {
       delete payload.password;
     }
 
-
-
-    // 🔥 CALL AXIOS SERVICE (NO fetch)
     console.log("API base:", import.meta.env.VITE_BACKEND_URL);
 
     console.log("Register payload:", payload);
 
     const res = await registerUser(payload);
 
-    // Optional: update local table if needed
     setEmployees((prev) => [...prev, res]);
 
     resetForm();
@@ -173,27 +169,7 @@ const AddEmployee = () => {
     message: "",
     onConfirm: null,
   });
-  const handleDelete = (id) => {
-  setConfirm({
-    show: true,
-    message: "Are you sure you want to delete this employee?",
-    onConfirm: async () => {
-      try {
-        await fetch(`http://localhost:3030/users/${id}`, {
-          method: "DELETE",
-        });
-        setEmployees(prev => prev.filter(e => e.id !== id));
-        toast.succ("Employee deleted successfully", "success");
-      } catch (err) {
-        console.error(err);
-        toast.error("Delete failed", "error");
-      } finally {
-        setConfirm({ show: false, message: "", onConfirm: null });
-      }
-    },
-  });
-};
-
+  
 const totalPages = Math.ceil(employees.length / itemsPerPage);
     const indexOfLast = currentPage * itemsPerPage;
     const indexOfFirst = indexOfLast - itemsPerPage;
@@ -217,7 +193,6 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
         theme="colored"
       />
       {/* ================= FORM ================= */}
-      {/* <div className="bg-white rounded-lg shadow-lg w-full min-h-screen p-3 sm:p-6"> */}
       <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-lg">
         <h2 className="text-2xl font-bold text-center mb-6">
           {editingEmployee ? "Edit Employee" : "Add Employee"}
@@ -328,179 +303,114 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
       </div>
 
       {/* ================= TABLE ================= */}
-      {/* <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px] min-w-0">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px] h-auto md:h-1/3 overflow-hidden">
         <h2 className="text-2xl font-bold text-center mb-4">
           Employee List
         </h2>
 
-        <div className="overflow-x-auto customs-scrollbar rounded-lg">
-          <table className="w-full border border-gray-200 table-auto">
-            <thead className="bg-sky-600 text-white text-xs sm:text-sm">
-              <tr>
-                {[
-                  "Name",
-                  "Email",
-                  "Phone",
-                  "Address",
-                  "Department",
-                  "Role"
+        {/* ================= MOBILE GRID ================= */}
+        <div className="overflow-x-auto customs-scrollbar rounded-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:hidden">
+            <table className="w-full border border-gray-200 table-auto">
+                <thead className="bg-sky-600 text-white text-xs sm:text-sm">
+                    <tr>
+                      {[
+                        "Name",
+                        "Email",
+                        "Phone",
+                        "Address",
+                        "Department",
+                        "Role"
 
-                ].map((h) => (
-                  <th key={h} className="px-4 py-2 text-left ">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="text-xs sm:text-sm">
-             {loading ? (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500 italic">
-                  <LogoLoading />
-                </td>
-              </tr>
-              ) : currentEmployees.length > 0 ? 
-              
-              (currentEmployees.map((emp) => (
-                 <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
-                      <td className="px-4 py-2 truncate">{emp.email}</td>
-                      <td className="px-4 py-2 truncate">{emp.ph_no}</td>
-                      <td className="px-4 py-2 truncate">{emp.address}</td>
-                      <td className="px-4 py-2 truncate">{emp.department_id}</td>
-                      <td className="px-4 py-2 truncate">{emp.role_id}</td>
-                  </tr>
-                )) 
-              ): (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="text-center py-4 text-gray-500 italic"
-                    >
-                      No employees found
-                    </td>
-                  </tr>
-                )}
-            </tbody>
-          </table>
-        </div>
-        <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-      </div> */}
+                      ].map((h) => (
+                        <th key={h} className="px-4 py-2 text-left ">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="text-xs sm:text-sm">
+                  {loading ? (
+                    <tr>
+                      <td colSpan="7" className="text-center py-4 text-gray-500 italic">
+                        <LogoLoading />
+                      </td>
+                    </tr>
+                    ) : currentEmployees.length > 0 ?             (currentEmployees.map((emp) => (
+                      <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                          <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
+                            <td className="px-4 py-2 truncate">{emp.email}</td>
+                            <td className="px-4 py-2 truncate">{emp.ph_no}</td>
+                            <td className="px-4 py-2 truncate">{emp.address}</td>
+                            <td className="px-4 py-2 truncate">{emp.department_id}</td>
+                            <td className="px-4 py-2 truncate">{emp.role_id}</td>
+                        </tr>
+                      )) 
+                    ): (
+                        <tr>
+                          <td
+                            colSpan="7"
+                            className="text-center py-4 text-gray-500 italic"
+                          >
+                            No employees found
+                          </td>
+                        </tr>
+                      )}
+                  </tbody>
+                </table>
+              </div>
 
-      {/* ================= EMPLOYEE LIST ================= */}
-<div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px] h-auto md:h-1/3 overflow-hidden">
-  <h2 className="text-2xl font-bold text-center mb-4">
-    Employee List
-  </h2>
+              {/* ================= DESKTOP TABLE ================= */}
+              <div className="hidden md:block overflow-x-auto customs-scrollbar rounded-lg">
+                <table className="w-full border border-gray-200 table-auto">
+                  <thead className="bg-sky-600 text-white text-sm">
+                    <tr>
+                      {["Name", "Email", "Phone", "Address", "Department", "Role"].map(
+                        (h) => (
+                          <th key={h} className="px-4 py-2 text-left">
+                            {h}
+                          </th>
+                        )
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {loading ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4">
+                          <LogoLoading />
+                        </td>
+                      </tr>
+                    ) : currentEmployees.length > 0 ? (
+                      currentEmployees.map((emp) => (
+                        <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                            <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
+                            <td className="px-4 py-2 truncate">{emp.email}</td>
+                            <td className="px-4 py-2 truncate">{emp.ph_no}</td>
+                            <td className="px-4 py-2 truncate">{emp.address}</td>
+                            <td className="px-4 py-2 truncate">{emp.department_id}</td>
+                            <td className="px-4 py-2 truncate">{emp.role_id}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4 text-gray-500 italic">
+                          No employees found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-  {/* ================= MOBILE GRID ================= */}
-   <div className="overflow-x-auto customs-scrollbar rounded-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:hidden">
-          <table className="w-full border border-gray-200 table-auto">
-            <thead className="bg-sky-600 text-white text-xs sm:text-sm">
-              <tr>
-                {[
-                  "Name",
-                  "Email",
-                  "Phone",
-                  "Address",
-                  "Department",
-                  "Role"
-
-                ].map((h) => (
-                  <th key={h} className="px-4 py-2 text-left ">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="text-xs sm:text-sm">
-             {loading ? (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-gray-500 italic">
-                  <LogoLoading />
-                </td>
-              </tr>
-              ) : currentEmployees.length > 0 ?             (currentEmployees.map((emp) => (
-                 <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                    <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
-                      <td className="px-4 py-2 truncate">{emp.email}</td>
-                      <td className="px-4 py-2 truncate">{emp.ph_no}</td>
-                      <td className="px-4 py-2 truncate">{emp.address}</td>
-                      <td className="px-4 py-2 truncate">{emp.department_id}</td>
-                      <td className="px-4 py-2 truncate">{emp.role_id}</td>
-                  </tr>
-                )) 
-              ): (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="text-center py-4 text-gray-500 italic"
-                    >
-                      No employees found
-                    </td>
-                  </tr>
-                )}
-            </tbody>
-          </table>
-        </div>
-
-  {/* ================= DESKTOP TABLE ================= */}
-  <div className="hidden md:block overflow-x-auto customs-scrollbar rounded-lg">
-    <table className="w-full border border-gray-200 table-auto">
-      <thead className="bg-sky-600 text-white text-sm">
-        <tr>
-          {["Name", "Email", "Phone", "Address", "Department", "Role"].map(
-            (h) => (
-              <th key={h} className="px-4 py-2 text-left">
-                {h}
-              </th>
-            )
-          )}
-        </tr>
-      </thead>
-      <tbody className="text-sm">
-        {loading ? (
-          <tr>
-            <td colSpan="6" className="text-center py-4">
-              <LogoLoading />
-            </td>
-          </tr>
-        ) : currentEmployees.length > 0 ? (
-          currentEmployees.map((emp) => (
-            <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
-                <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
-                <td className="px-4 py-2 truncate">{emp.email}</td>
-                <td className="px-4 py-2 truncate">{emp.ph_no}</td>
-                <td className="px-4 py-2 truncate">{emp.address}</td>
-                <td className="px-4 py-2 truncate">{emp.department_id}</td>
-                <td className="px-4 py-2 truncate">{emp.role_id}</td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="6" className="text-center py-4 text-gray-500 italic">
-              No employees found
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
-
-  <Pagination
-    currentPage={currentPage}
-    totalPages={totalPages}
-    onPageChange={setCurrentPage}
-  />
-</div>
-
-    </div>
-  );
-};
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </div>
+        );
+      };
 
 /* ================= SMALL COMPONENTS ================= */
 

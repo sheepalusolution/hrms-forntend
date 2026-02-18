@@ -1,26 +1,3 @@
-// import axios from "axios";
-
-// const API_BASE_URL = "https://t4fbgm8z-8000.inc1.devtunnels.ms/employee";
-
-// export const getAllEmployees = async () => {
-//   try {
-//     const response = await axios.get(
-//       `${API_BASE_URL}/employees/`,
-//       {
-//         headers: {
-//           accept: "application/json",
-//         },
-//       }
-//     );
-//     console.log("Raw employees response:", response.data); 
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching employees:", error);
-//     throw error;
-//   }
-// };
-
-// EmployeesService.js
 import axios from "axios";
 
 const API_BASE_URL = "https://t4fbgm8z-8000.inc1.devtunnels.ms";

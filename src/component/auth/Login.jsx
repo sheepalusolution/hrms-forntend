@@ -36,53 +36,6 @@ export default function Login() {
     }
   }, [error]);
 
-//   const handleLogin = async (e) => {
-//   e.preventDefault();
-//   setLoading(true);
-//   setError("");
-
-//   const email = e.target.email.value.trim();
-//   const password = e.target.password.value;
-//   const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
-//   try {
-//     const res = await fetch(`${BASE_URL}/auth/login`, {
-//       method: "POST",
-//       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//       body: JSON.stringify({ email, password }),
-//     });
-
-//     const data = await res.json();
-//     console.log("Login response:", data);
-
-//     if (!res.ok) {
-//       setError(data.message || "Invalid email or password");
-//       return;
-//     }
-
-//     // Use role_name (string) for permissions
-//     const role = data.role_name?.toLowerCase();
-//     if (!ROLE_PERMISSIONS[role]) {
-//       console.log("Unauthorized role:", role);
-//       navigate("/unauthorized");
-//       return;
-//     }
-
-//     // Save user with string role
-//     login({ ...data, role },
-//       data.access_token, 
-//       data.refresh_token 
-//     );
-
-//     navigate("/dashboard");
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     setError("Server error. Please try again.");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
 const handleLogin = async (e) => {
   e.preventDefault();
   setLoading(true);
