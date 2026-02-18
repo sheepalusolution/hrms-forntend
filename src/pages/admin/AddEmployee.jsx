@@ -31,10 +31,10 @@ const AddEmployee = () => {
   useEffect(() => {
   const fetchEmployees = async () => {
     try {
-      // const data = await getAllEmployees();
+      const data = await getAllEmployees();
       //real
-       const res = await fetch("http://localhost:4000/users");
-      const data = await res.json();
+      //  const res = await fetch("http://localhost:4000/users");
+      // const data = await res.json();
       //fake
       console.log("api data", data)
       setEmployees(data);
@@ -200,7 +200,7 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
     const currentEmployees = employees.slice(indexOfFirst, indexOfLast);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 bg-gray-100 p-4 sm:p-6">
+    <div className="flex flex-col lg:flex-row gap-6 min-h-screen bg-gray-100 p-4 sm:p-6">
       <ConfirmModal
         show={confirm.show}
         message={confirm.message}
@@ -217,7 +217,8 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
         theme="colored"
       />
       {/* ================= FORM ================= */}
-      <div className="bg-white rounded-lg shadow-lg w-full min-h-screen p-3 sm:p-6">
+      {/* <div className="bg-white rounded-lg shadow-lg w-full min-h-screen p-3 sm:p-6"> */}
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full lg:max-w-lg">
         <h2 className="text-2xl font-bold text-center mb-6">
           {editingEmployee ? "Edit Employee" : "Add Employee"}
         </h2>
@@ -327,7 +328,7 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
       </div>
 
       {/* ================= TABLE ================= */}
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full h-1/3 max-w-[700px]">
+      {/* <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px] min-w-0">
         <h2 className="text-2xl font-bold text-center mb-4">
           Employee List
         </h2>
@@ -359,6 +360,7 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
                 </td>
               </tr>
               ) : currentEmployees.length > 0 ? 
+              
               (currentEmployees.map((emp) => (
                  <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
                     <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
@@ -387,7 +389,115 @@ const totalPages = Math.ceil(employees.length / itemsPerPage);
             totalPages={totalPages}
             onPageChange={setCurrentPage}
           />
-      </div>
+      </div> */}
+
+      {/* ================= EMPLOYEE LIST ================= */}
+<div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-[700px] h-auto md:h-1/3 overflow-hidden">
+  <h2 className="text-2xl font-bold text-center mb-4">
+    Employee List
+  </h2>
+
+  {/* ================= MOBILE GRID ================= */}
+   <div className="overflow-x-auto customs-scrollbar rounded-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:hidden">
+          <table className="w-full border border-gray-200 table-auto">
+            <thead className="bg-sky-600 text-white text-xs sm:text-sm">
+              <tr>
+                {[
+                  "Name",
+                  "Email",
+                  "Phone",
+                  "Address",
+                  "Department",
+                  "Role"
+
+                ].map((h) => (
+                  <th key={h} className="px-4 py-2 text-left ">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="text-xs sm:text-sm">
+             {loading ? (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-gray-500 italic">
+                  <LogoLoading />
+                </td>
+              </tr>
+              ) : currentEmployees.length > 0 ?             (currentEmployees.map((emp) => (
+                 <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                    <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
+                      <td className="px-4 py-2 truncate">{emp.email}</td>
+                      <td className="px-4 py-2 truncate">{emp.ph_no}</td>
+                      <td className="px-4 py-2 truncate">{emp.address}</td>
+                      <td className="px-4 py-2 truncate">{emp.department_id}</td>
+                      <td className="px-4 py-2 truncate">{emp.role_id}</td>
+                  </tr>
+                )) 
+              ): (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="text-center py-4 text-gray-500 italic"
+                    >
+                      No employees found
+                    </td>
+                  </tr>
+                )}
+            </tbody>
+          </table>
+        </div>
+
+  {/* ================= DESKTOP TABLE ================= */}
+  <div className="hidden md:block overflow-x-auto customs-scrollbar rounded-lg">
+    <table className="w-full border border-gray-200 table-auto">
+      <thead className="bg-sky-600 text-white text-sm">
+        <tr>
+          {["Name", "Email", "Phone", "Address", "Department", "Role"].map(
+            (h) => (
+              <th key={h} className="px-4 py-2 text-left">
+                {h}
+              </th>
+            )
+          )}
+        </tr>
+      </thead>
+      <tbody className="text-sm">
+        {loading ? (
+          <tr>
+            <td colSpan="6" className="text-center py-4">
+              <LogoLoading />
+            </td>
+          </tr>
+        ) : currentEmployees.length > 0 ? (
+          currentEmployees.map((emp) => (
+            <tr key={emp.id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                <td className="px-4 py-2 truncate">{emp.first_name} {emp.last_name}</td>
+                <td className="px-4 py-2 truncate">{emp.email}</td>
+                <td className="px-4 py-2 truncate">{emp.ph_no}</td>
+                <td className="px-4 py-2 truncate">{emp.address}</td>
+                <td className="px-4 py-2 truncate">{emp.department_id}</td>
+                <td className="px-4 py-2 truncate">{emp.role_id}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="6" className="text-center py-4 text-gray-500 italic">
+              No employees found
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    onPageChange={setCurrentPage}
+  />
+</div>
+
     </div>
   );
 };
